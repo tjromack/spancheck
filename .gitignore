@@ -1,0 +1,28 @@
+# Python build artifacts
+__pycache__/
+*.pyc
+*.egg-info/
+build/
+dist/
+.eggs/
+
+# Virtual envs
+.venv/
+venv/
+
+# Test / tooling caches
+.pytest_cache/
+.ruff_cache/
+.mypy_cache/
+
+# Local audit outputs from ad-hoc runs (real runs are documented, not committed as noise)
+audit.json
+*.audit.json
+
+# OS / editor junk
+.DS_Store
+Thumbs.db
+*.tmp
+
+# Secrets
+.env

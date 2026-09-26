@@ -1,0 +1,38 @@
+[build-system]
+requires = ["setuptools>=68"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "abstain"
+version = "0.0.1"
+description = "Score a grounded-answer system on citation accuracy, abstention correctness, hallucination rate, cost and latency — with an audit log a compliance reviewer can read."
+readme = "README.md"
+requires-python = ">=3.11"
+license = { text = "LicenseRef-Source-Available" }
+authors = [{ name = "Trevor J. Romack", email = "tjromack@gmail.com" }]
+keywords = ["rag", "evaluation", "llm", "hallucination", "citation", "abstention", "guardrails"]
+classifiers = [
+  "Programming Language :: Python :: 3",
+  "Programming Language :: Python :: 3.11",
+  "Operating System :: OS Independent",
+  "Intended Audience :: Developers",
+  "Topic :: Software Development :: Quality Assurance",
+]
+# Standard-library first (design pin: a hard dependency is added only with a DECISIONS entry). None yet.
+dependencies = []
+
+[project.optional-dependencies]
+dev = ["pytest>=8"]
+
+[project.urls]
+Homepage = "https://github.com/tjromack/abstain"
+Source = "https://github.com/tjromack/abstain"
+
+[project.scripts]
+abstain = "abstain.cli:main"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
