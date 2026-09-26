@@ -158,6 +158,20 @@ class Run:
                    for r in d["results"]]
         return Run(results)
 
+    @staticmethod
+    def from_audit_log(doc):
+        """Reconstruct a Run from an audit-log dict or JSON file — so `spancheck score`/`gate` recompute offline."""
+        if isinstance(doc, str):
+            with open(doc, "r", encoding="utf-8") as f:
+                doc = json.load(f)
+        results = [CaseResult(c["case_id"], c.get("category", "default"), Run._restore_output(c.get("output")),
+                              [GradeResult(**{k: g[k] for k in ("grader", "score", "passed", "detail") if k in g})
+                               for g in c.get("grades", [])],
+                              c.get("error"), input=c.get("input"), expected=c.get("expected"),
+                              meta=c.get("meta") or {})
+                   for c in doc.get("cases", [])]
+        return Run(results)
+
     def rescore(self, graders):
         """Re-apply `graders` to the captured outputs with NO system call (design pin #3).
 

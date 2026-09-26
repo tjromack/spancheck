@@ -1,0 +1,24 @@
+name: spancheck-demo
+
+# Dogfood: run the spancheck Action (this repo's own action.yml) against the shipped demo target,
+# and fail if the gate isn't met. Proves the Action end-to-end on every push.
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+jobs:
+  evaluate:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Score the demo system and gate
+        uses: ./
+        with:
+          cases: examples/cases.jsonl
+          target: spancheck.demo:system
+          thresholds: "citation_accuracy=1.0 abstention_correct=1.0 groundedness=1.0"

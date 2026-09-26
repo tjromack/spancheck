@@ -1,0 +1,47 @@
+name: "spancheck"
+description: "Score a grounded-answer system on citation accuracy, abstention, hallucination, cost/latency — and fail a PR on a regression."
+branding:
+  icon: "check-circle"
+  color: "blue"
+
+inputs:
+  cases:
+    description: "Path to the cases file (JSONL)."
+    required: true
+  target:
+    description: "The system under test, as 'module:callable'."
+    required: true
+  out:
+    description: "Where to write the audit log."
+    required: false
+    default: "audit.json"
+  thresholds:
+    description: "Space-separated grader=min_pass_rate (e.g. 'citation_accuracy=1.0 groundedness=0.9')."
+    required: false
+    default: ""
+  baseline:
+    description: "Optional baseline audit log for regression gating."
+    required: false
+    default: ""
+  max-regression:
+    description: "Max allowed pass_rate drop vs the baseline."
+    required: false
+    default: "0.0"
+
+runs:
+  using: "composite"
+  steps:
+    - name: Install spancheck
+      shell: bash
+      run: pip install "${{ github.action_path }}"
+    - name: Run the evaluation
+      shell: bash
+      run: spancheck run "${{ inputs.cases }}" --target "${{ inputs.target }}" --out "${{ inputs.out }}"
+    - name: Gate on the results
+      shell: bash
+      run: |
+        args=""
+        if [ -n "${{ inputs.baseline }}" ]; then
+          args="--baseline ${{ inputs.baseline }} --max-regression ${{ inputs.max-regression }}"
+        fi
+        spancheck gate "${{ inputs.out }}" ${{ inputs.thresholds }} $args

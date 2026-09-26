@@ -160,6 +160,34 @@ Raw material for the case study and any later writing — kept honest and specif
   harness's 1.00): `python -m spancheck.calibrate --real --model claude-sonnet-5` with `ANTHROPIC_API_KEY` set. The
   build does not require it; the stub baseline (0.75) is what's committed until a real run is recorded.
 
+### Phase 5 — shipped this session (CLI + GitHub Action)
+- `cli.py`: `spancheck run` (load JSONL cases + a `module:callable` target → evaluate → write audit log), `score`
+  (recompute metrics from a cached audit log, offline; `--regrade` re-runs graders on cached outputs), `gate`
+  (thresholds as `grader=rate`, optional `--baseline` regression gate, **exit 1 on failure** for CI). Each is a few
+  lines over the library (pin #1). Added `Run.from_audit_log` so score/gate reconstruct a run from the versioned log.
+- A shipped demo target (`spancheck.demo:system`, a fake keyword-retrieval RAG over a 3-clause corpus) +
+  `examples/cases.jsonl`, so `spancheck run …` works from a clean clone with **no user code and no key** — the exact
+  command in the README.
+- `action.yml` (composite: install → run → gate) that fails a PR on a regression; `.github/workflows/ci.yml`
+  (pytest on 3.11/3.12 from a clean clone) and `spancheck-demo.yml` (the repo **dogfoods its own Action** against the
+  demo on every push).
+- **66 tests** (7 new): run writes a valid schema-1.0 log; pricing computes cost; score reads offline; gate
+  pass/fail exit codes; a baseline regression trips the gate; a bad target spec errors. Console script verified in a
+  clean **non-editable** install (`spancheck run … && spancheck gate …`).
+
+### Learnings (Phase 5)
+- **A shipped demo target is what makes "path to try it" real.** Rather than a README snippet a reader has to adapt,
+  `spancheck run examples/cases.jsonl --target spancheck.demo:system` runs on a clean clone and scores 3/3 — and the CI
+  workflow runs that same command through the Action, so the "try it" path is continuously proven, not just claimed.
+- **Library-first kept the CLI honest.** Because every command is a thin wrapper, the CLI has almost no logic of its
+  own to test — the behaviour was already covered in the library tests, and `test_cli.py` only checks the wiring
+  (parsing, file IO, exit codes). That's the pin #1 dividend.
+- **The Action is the honest replacement for the harness's web app** — a reusable tool's surface is CI + a CLI, not a
+  running dashboard bound to one deployment. Recorded in LINEAGE as part of "what the harness got wrong that this
+  fixes."
+
 ### Open / next
-- **Phase 4 complete.** Next is Phase 5 — the CLI + GitHub Action thin wrappers (`spancheck run` / `score` / `gate`;
-  `action.yml` failing a PR on a regression via `gate`). Proceeding per Trevor's standing note.
+- **Phase 5 complete.** Next is Phase 6 — the end-to-end **dogfood against a real target** (Suver's published case
+  study, as a black box) producing a real scorecard + audit log, the **case study** framed as the harness's evolution,
+  and the **harness copy pass** (now that the API is stable). This is the phase that most benefits from a review — and
+  from the optional keyed calibration number — so a natural point to sync with Trevor.

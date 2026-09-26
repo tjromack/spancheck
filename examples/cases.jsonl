@@ -1,0 +1,3 @@
+{"id": "notice", "input": "What is the notice period to terminate?", "category": "answerable", "expected": "30 days", "meta": {"answerable": true}}
+{"id": "invoices", "input": "When are invoices payable?", "category": "answerable", "expected": "45 days", "meta": {"answerable": true}}
+{"id": "revenue", "input": "What is the company's annual revenue?", "category": "unanswerable", "meta": {"answerable": false}}

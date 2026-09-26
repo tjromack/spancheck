@@ -48,8 +48,7 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
       per-citation verdicts; documented in `docs/AUDIT-LOG.md` (AB-DEC 008)
 - [x] offline re-scoring (`Run.rescore(graders)`) — change a threshold / add a grader with no system call; `Run.load`
       round-trips the `Output` + case meta so a saved run is re-gradable
-- [~] `spancheck score <audit.json>` — the **library** recompute is done (`rescore` / `cost_latency` / `audit_log`);
-      the CLI wrapper is wired in **Phase 5** (library-first, CLI-second)
+- [x] `spancheck score <audit.json>` — library recompute done here; CLI wrapper wired in **Phase 5** ✅
 - [x] 49 tests pass. **← stop for approval before Phase 4**
 
 ## Phase 4 — the LLM-judge (optional, calibrated, file-based prompts) ✅ (2026-09-26)
@@ -66,10 +65,15 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
 - [x] 59 tests pass. **[Trevor] optional keyed run** for the real agreement number: `python -m spancheck.calibrate --real`
       (needs `ANTHROPIC_API_KEY`). **← stop for approval before Phase 5**
 
-## Phase 5 — CLI + GitHub Action (thin wrappers)
-- [ ] `spancheck run` / `spancheck score` / `spancheck gate` (argparse; three-lines-of-Python parity)
-- [ ] `action.yml` shelling to the CLI; a workflow that fails a PR on a regression (uses `gate`)
-- [ ] **stop for approval**
+## Phase 5 — CLI + GitHub Action (thin wrappers) ✅ (2026-09-26)
+- [x] `spancheck run` / `spancheck score` / `spancheck gate` (`cli.py`, argparse; each a few lines over the API);
+      `gate` exits 1 on failure for CI; `Run.from_audit_log` reconstructs a run so score/gate recompute offline
+- [x] a shipped demo target (`spancheck.demo:system`) + `examples/cases.jsonl` so `run` works from a clean clone with
+      no user code and no key
+- [x] `action.yml` (composite: install → run → gate) failing a PR on a regression via `gate`
+- [x] `.github/workflows/ci.yml` (pytest on 3.11/3.12 from a clean clone) + `spancheck-demo.yml` (dogfoods the Action
+      against the demo on every push)
+- [x] 66 tests pass; console script verified in a clean non-editable install. **← stop for approval before Phase 6**
 
 ## Phase 6 — dogfood + case study + the harness copy pass
 - [ ] run `spancheck` end-to-end against Suver's published case study as a black box → real scorecard + audit log

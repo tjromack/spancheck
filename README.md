@@ -27,21 +27,45 @@ wrappers over it.
 
 ## Status
 
-**Phases 1–4 shipped.** The measurement core (`Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`), the thin
+**Phases 1–5 shipped.** The measurement core (`Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`), the thin
 `adapter` contract, the deterministic graders, **citation-span verification** — the capability this build exists to
-add — the **cost/latency + versioned audit log** layer, and the **calibrated LLM-judge** are implemented, dependency-free
-(the judge reaches a model only through a caller-supplied callable), and tested (59 tests, verified from a clean
-`pip install`). Citation verification splits into **provenance** (is the cited span really in the retrieved context,
-verbatim?) and **support** (does the span cover the claim?); both must hold, so a fabricated quote or a
-right-answer-wrong-citation cannot pass. A captured run re-scores **offline** (`Run.rescore`), and `run.audit_log()`
-emits a versioned, self-describing record with per-citation verdicts (schema in
+add — the **cost/latency + versioned audit log** layer, the **calibrated LLM-judge**, and the **CLI + GitHub Action**
+are implemented, dependency-free (the judge reaches a model only through a caller-supplied callable), and tested
+(66 tests, verified from a clean `pip install`). Citation verification splits into **provenance** (is the cited span
+really in the retrieved context, verbatim?) and **support** (does the span cover the claim?); both must hold, so a
+fabricated quote or a right-answer-wrong-citation cannot pass. A captured run re-scores **offline** (`Run.rescore`),
+and `run.audit_log()` emits a versioned, self-describing record with per-citation verdicts (schema in
 [`docs/AUDIT-LOG.md`](docs/AUDIT-LOG.md)). The LLM-judge is **opt-in** — the default grader set stays fully
 deterministic and offline — and is **calibrated before it is trusted**: `python -m spancheck.calibrate` measures
-judge-vs-human agreement on a gold set rather than asserting a number. Still to come per `TODO.md`: the **CLI + GitHub
-Action** wrappers (Phase 5) and an end-to-end **dogfood** against a real target (Phase 6).
+judge-vs-human agreement on a gold set rather than asserting a number. Still to come per `TODO.md`: an end-to-end
+**dogfood** against a real target + the case study (Phase 6).
 
 No end-to-end benchmark numbers appear here yet: they arrive with the Phase-6 dogfood. Until measured, any figure would
 be invented, and this project does not ship invented numbers (see `CLAUDE.md`).
+
+## Command line & CI
+
+The CLI is a thin wrapper over the library. It works out of the box against a shipped demo target — no key, no user
+code:
+
+```bash
+pip install -e .
+spancheck run examples/cases.jsonl --target spancheck.demo:system --out audit.json
+spancheck score audit.json                                    # recompute metrics from the cache, offline
+spancheck gate  audit.json citation_accuracy=1.0 groundedness=0.9   # exit 1 on failure (for CI)
+```
+
+Point `--target` at your own system with `module:callable` (any `input -> answer` function; the answer may be a string
+or a dict with `contexts`/`citations`/`usage`). As a **GitHub Action** (fails a PR on a regression):
+
+```yaml
+- uses: tjromack/spancheck@main
+  with:
+    cases: eval/cases.jsonl
+    target: myapp.rag:answer
+    thresholds: "citation_accuracy=1.0 groundedness=0.9"
+    baseline: baseline-audit.json   # optional: also fail on a pass-rate drop
+```
 
 ## Lineage
 
