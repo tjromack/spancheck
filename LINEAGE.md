@@ -58,12 +58,12 @@ versioned audit-log schema and the file-based judge prompts are still **planned*
 | provider coupling | evallab's `from . import provider` | a caller-supplied provider callable; stub by default; no vendor hard-coded (design pin #2) |
 | packaging | inside the workspace repo | standalone `src/` package, PyPI-installable (AB-DEC 004) |
 
-## New here (planned)
+## New here
 
-| Piece | Why it's net-new |
-|---|---|
-| **citation-span verification** (`citation_accuracy`) | neither `evallab`, the harness, nor Suver's eval checks whether a *cited span actually supports the claim*. `evallab.groundedness` checks word-overlap against the whole context bag — not the specific span cited. This is the one capability new to the entire workspace, and the reason the build exists as more than repackaging. Built first, tested deepest (`TODO.md` Phase 2). |
-| cost/latency as a first-class metric computed offline from a cached run | evallab has `max_latency` as a pass/fail grader but no cost accounting and no "capture once, re-score offline" guarantee |
+| Piece | Status | Why it's net-new |
+|---|---|---|
+| **citation-span verification** (`span.py`: `verify_citation`, `citation_accuracy`) | **landed Phase 2 (2026-09-26)** | Neither `evallab`, the harness, nor Suver's eval checks whether a *cited span actually supports the claim*. `evallab.groundedness` checks word-overlap against the *whole* context bag — it cannot tell a fabricated quote from a real one, or a right-answer-wrong-citation from a right one. `spancheck` splits this into **provenance** (is the span really in the context?) and **support** (does the span cover the claim?), both deterministic, both required. This is the one capability new to the entire workspace and the reason the build is more than repackaging (AB-DEC 007). Built first, tested deepest — 20+ span tests including every adversarial failure mode and the documented proxy boundary. |
+| cost/latency as a first-class metric computed offline from a cached run | planned (Phase 3) | evallab has `max_latency` as a pass/fail grader but no cost accounting and no "capture once, re-score offline" guarantee. The `Output` contract (Phase 1) already carries `usage` + `latency_ms`; Phase 3 turns them into the reported metric + the versioned audit log. |
 
 ## What the harness got wrong that this fixes (to be filled honestly as discovered)
 

@@ -107,5 +107,55 @@ never a raw dict.
   themselves (worse ergonomics than "hand us a function"). The adapter stays *thin* — it normalises and times, nothing
   more, so there is still no provider lock-in (design pin #2).
 
+## AB-DEC 007 — Citation-span verification: design (2026-09-26, Phase 2)
+**Status:** Decided (before code). This is the capability the whole build exists to add (`spancheck` is named for it),
+so it is built first among the metrics and tested deepest.
+
+**The question it answers:** for each claim an answer makes and each span it cites, *does the cited span actually
+support the claim?* A grounded-answer system fails this in three distinct ways, and the design must catch all three:
+
+1. **Fabricated span** — the system quotes source text that isn't in the retrieved context at all.
+2. **Cited-but-unsupported / wrong-span** — the span is real (present in context) but doesn't support the claim
+   attached to it. *Includes the "right answer, wrong citation" case: a correct answer with a citation that doesn't
+   back it is still a citation failure, because the trust artefact — the audit trail — is broken.*
+3. **Uncited claim** — the answer asserts something and cites nothing verifiable.
+
+**The design — two deterministic checks per citation, both must hold:**
+
+- **(a) Provenance** — is the cited span present in the retrieved contexts? Deterministic: normalise whitespace and
+  case, then require the span to be a **substring** of the joined contexts. Catches (1). Strict on purpose: a system
+  should cite **verbatim**; near-match/fuzzy acceptance would be a door for fabrication.
+- **(b) Support (proxy)** — does the span cover the claim? Deterministic proxy: the fraction of the claim's content
+  words present in the span must clear a threshold (default 0.6, the same spirit as `groundedness`). Catches (2). The
+  claim defaults to the whole answer, or is the specific sentence a citation names.
+
+A citation is **OK** iff provenance ∧ support. The `citation_accuracy` grader scores the **fraction** of citations
+that are OK (so partial quality is visible) and, by default, **passes only when the fraction is 1.0** (`pass_threshold`,
+because one broken citation breaks the audit trail). An **abstention** cites nothing and passes trivially; an answer
+that asserts a claim with **no citations** fails (`require_citation=True` default) — catches (3).
+
+**Citation shape (fixes `Output.citations`, previously carried through untyped):** each citation is either a bare
+`str` (the span) or a dict `{span|quote|text, claim?, source_id?}`. `claim` scopes support to one sentence;
+`source_id` is carried but not yet used to *scope* provenance (see limits).
+
+**Stated limits (honest, and where Phase 4 comes in):**
+- The support check is **lexical overlap, not entailment.** It cannot catch a span that contains the claim's words but
+  **contradicts** it ("the notice period is **not** 30 days"). True entailment is exactly what the calibrated
+  LLM-judge (Phase 4) is for; Phase 2 gives the deterministic backbone and flags this boundary. A test documents the
+  false-positive so the boundary is explicit, not hidden.
+- **Paraphrased citations are not matched by design** — provenance requires a verbatim (normalised) quote. A system
+  that cites by paraphrase will score 0 on provenance; that is a deliberate incentive to quote sources exactly.
+- **`source_id` doesn't yet scope provenance** — a span found in *any* context passes. Scoping a citation to its named
+  source is a refinement, not shipped in Phase 2.
+
+**Rejected alternatives:**
+- **Semantic similarity / embeddings for support.** More robust than lexical overlap, but it needs a heavy dependency
+  (a local model) or a new vendor (a new key, egress, cost) — a dependency-free library can't take that on by default,
+  and it's the same trust/cost call parked elsewhere in the portfolio. The lexical proxy now, the LLM-judge as the
+  opt-in upgrade (Phase 4), keeps the core dependency-free and deterministic.
+- **An LLM-judge for provenance.** Provenance is a factual, checkable property; making it non-deterministic would
+  invite drift on the one check that should never drift. The judge is reserved for the qualitative residue (support /
+  entailment), never for "is this quote real."
+
 ---
-*Next entry = AB-DEC 007 (the citation-span verification design, once the API is sketched).*
+*Next entry = AB-DEC 008.*

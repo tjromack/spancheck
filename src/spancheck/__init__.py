@@ -25,6 +25,7 @@ from .core import (
     gate,
     default_graders,
 )
+from .span import citation_accuracy, verify_citation, CitationVerdict
 from . import graders
 
 __version__ = "0.0.1"
@@ -32,6 +33,8 @@ __version__ = "0.0.1"
 __all__ = [
     # the declared public surface
     "Case", "evaluate", "adapter", "Run", "Scorecard", "gate", "diff",
+    # citation-span verification (the capability spancheck is named for)
+    "citation_accuracy", "verify_citation", "CitationVerdict",
     # supporting types + the grader library
     "Output", "normalize", "GradeResult", "CaseResult", "run_eval", "default_graders", "graders",
 ]

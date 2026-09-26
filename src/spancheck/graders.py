@@ -14,19 +14,11 @@ import re
 
 from .adapter import Output, normalize
 from .core import GradeResult
-
-_WORD = re.compile(r"[a-z0-9]+")
-_STOP = set("the a an and or of to in on for is are was were be been it its this that with as at by from "
-            "your you our we i they he she them his her their not no do does did have has had will would can "
-            "could should may might must shall into over under about than then so if but".split())
+from ._text import WORD as _WORD, content_words as _content_words
 
 
 def _out(output) -> Output:
     return output if isinstance(output, Output) else normalize(output)
-
-
-def _content_words(s):
-    return [w for w in _WORD.findall((s or "").lower()) if w not in _STOP and len(w) > 2]
 
 
 # ---------------- deterministic graders ----------------

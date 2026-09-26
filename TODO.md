@@ -30,13 +30,16 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
 - [x] LINEAGE entries (carried-over vs rewritten + why); AB-DEC 006 for the `Output` contract
 - [x] tests: 22 pass; verified from a clean `pip install -e .` venv (no PYTHONPATH). **← stop for approval before Phase 2**
 
-## Phase 2 — citation-span verification (the new capability — deepest tests)
-- [ ] AB-DEC 006: the span-check design (offset-based? substring? semantic? — decided and written before coding)
-- [ ] `citation_accuracy` grader: for each claim + its cited span, does the span support the claim?
-- [ ] adversarial fixtures: cited-but-unsupported, right-answer-wrong-span, fabricated span, no-citation — each must
-      fail the way it should (a test that would catch a silent pass)
-- [ ] LINEAGE: this is the piece the harness did **not** have — record it as the net-new capability
-- [ ] **stop for approval**
+## Phase 2 — citation-span verification (the new capability — deepest tests) ✅ (2026-09-26)
+- [x] AB-DEC 007: the span-check design — two deterministic checks (provenance = strict normalised substring;
+      support = lexical-overlap proxy), both must hold; written before coding
+- [x] `verify_citation()` + `citation_accuracy` grader (`span.py`); citation shape fixed (str | {span, claim?, source_id?});
+      joined the default grader set (uncited answer scores 0 by default)
+- [x] adversarial fixtures (`tests/test_span.py`): fabricated span, cited-but-unsupported/wrong-span,
+      right-answer-wrong-citation, uncited claim, empty span, paraphrase-not-matched, partial — each fails as it should
+- [x] the documented proxy boundary: a test pins that lexical support can't see negation (Phase-4 judge territory)
+- [x] LINEAGE: recorded as the net-new capability the harness/evallab never had
+- [x] 37 tests pass. **← stop for approval before Phase 3**
 
 ## Phase 3 — cost & latency + the versioned audit log
 - [ ] cost/latency computed from a cached run, no network (design pin #3)

@@ -27,11 +27,13 @@ wrappers over it.
 
 ## Status
 
-**Phase 1 shipped — the measurement core runs.** `Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`, the thin
-`adapter` contract, and the deterministic graders (abstention correctness, a groundedness/hallucination proxy, PII-leak,
-latency) are implemented, dependency-free, and tested (22 tests, verified from a clean `pip install -e .`). Still to
-come per `TODO.md`: **citation-span verification** (Phase 2 — the capability this build exists to add), the **versioned
-audit log** (Phase 3), and the **calibrated LLM-judge** (Phase 4).
+**Phases 1–2 shipped.** The measurement core (`Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`), the thin
+`adapter` contract, the deterministic graders (abstention correctness, groundedness/hallucination proxy, PII-leak,
+latency), and — the capability this build exists to add — **citation-span verification** are implemented,
+dependency-free, and tested (37 tests, verified from a clean `pip install -e .`). Citation verification splits into
+**provenance** (is the cited span really in the retrieved context, verbatim?) and **support** (does the span cover the
+claim?); both are deterministic and both must hold, so a fabricated quote or a right-answer-wrong-citation cannot pass.
+Still to come per `TODO.md`: the **versioned audit log** (Phase 3) and the **calibrated LLM-judge** (Phase 4).
 
 No benchmark numbers appear here yet: they arrive when `spancheck` is run end-to-end against a real target (Phase 6).
 Until measured, any figure would be invented, and this project does not ship invented numbers (see `CLAUDE.md`).
@@ -66,16 +68,29 @@ cases = [
 
 # 3. Score it — a run is captured once, then the metrics compute offline
 run = evaluate(cases, my_system)
-print(run.scorecard().by_grader())   # abstention correctness, groundedness, PII-leak (+ citation accuracy in Phase 2)
+print(run.scorecard().by_grader())   # citation accuracy, abstention correctness, groundedness, PII-leak
 run.save("run.json")                 # persist a run for baselines / regression gating
 # run.audit_log("audit.json")        # the versioned, compliance-readable record — Phase 3
 ```
 
 ```bash
-# CLI (thin wrapper over the same API)
+# CLI (thin wrapper over the same API) — command surface exists; wired to the library in Phase 5
 spancheck run cases.jsonl --target my_module:my_system --out audit.json
 spancheck score audit.json        # recompute metrics from a cached run, no network
 ```
+
+## Limits — what a passing score does *not* claim
+
+- **Support is a lexical proxy, not entailment.** Citation *support* is scored by how much of the claim's wording the
+  cited span covers. It cannot see a span that shares the claim's words but **contradicts** it ("the notice period is
+  *not* 30 days"). True entailment is what the calibrated LLM-judge (Phase 4) is for; the deterministic core flags this
+  boundary rather than hiding it (there is a test that pins the false-positive).
+- **Provenance requires a verbatim quote.** A paraphrased citation fails provenance by design — a deliberate incentive
+  for a system to quote its sources exactly. `spancheck` does not (yet) match a citation by meaning.
+- **A citation isn't scoped to its named source.** A cited span found in *any* retrieved context passes; tying a
+  citation to the specific `source_id` it names is a planned refinement.
+- **Groundedness is a word-overlap proxy too**, and the metrics are only as good as the test set you bring. `spancheck`
+  measures a system against cases you author; it does not generate them.
 
 ## Design pins
 

@@ -66,6 +66,37 @@ Raw material for the case study and any later writing — kept honest and specif
   design pin #3 ("every metric computable without network from a cached run") stops being an aspiration and becomes a
   property of the type — and Phase 2's span verifier already has its slot (`Output.citations`).
 
+### Phase 2 — shipped this session (citation-span verification, the differentiator)
+- Wrote **AB-DEC 007** (the span-check design) *before* code, per the contract: two deterministic checks per citation,
+  both required — **provenance** (strict normalised-substring match against the contexts → catches a fabricated quote)
+  and **support** (lexical-overlap proxy: does the span cover the claim → catches cited-but-unsupported / wrong-span).
+- Built `span.py`: `verify_citation()` (library-first, callable on one citation) + the `citation_accuracy` grader;
+  fixed the citation shape (`str | {span, claim?, source_id?}`); joined it to the default grader set so an **uncited
+  answer scores 0** on the tool's own thesis.
+- **37 tests** (20+ new), the deepest coverage in the repo — every adversarial mode has a test that fails if the
+  verifier stops catching it: fabricated span, wrong-span, **right-answer-wrong-citation**, uncited claim, empty span,
+  paraphrase-not-matched, partial. Plus a test that pins the **documented proxy boundary** (negation is invisible to
+  lexical overlap — Phase-4 judge territory), so the limit is explicit, not hidden.
+
+### Learnings (Phase 2)
+- **The tool caught my own bad citation.** A test fixture labelled a bare-string citation "valid," but a bare string
+  defaults its claim to the *whole* (multi-topic) answer, which one span can't cover — so `citation_accuracy` scored it
+  0.0, not the 0.5 I asserted. The code was right; my fixture was wrong. Two things banked: (1) **claim scoping
+  matters** — cite a span *for a specific sentence*, not the whole answer; (2) it's a small live demonstration that the
+  verifier does what it says, which is a good case-study beat.
+- **Deterministic-first pays off in testability.** Because provenance and support are pure functions, every failure
+  mode is a fast, exact unit test with no model in the loop — the reason this is the deepest-tested part of the repo.
+- **Naming the limit is part of the trust story.** Writing the negation false-positive into a test and the README
+  (rather than quietly hoping nobody hits it) is the same discipline as the eval that "flagged a fabrication that was
+  actually correct" elsewhere in the portfolio: measure the boundary, state it, and point at the upgrade (Phase 4).
+
+### Decisions (added)
+- **AB-DEC 007** — citation-span verification design (two checks, deterministic, both required; lexical support proxy
+  with the judge as the entailment upgrade; strict verbatim provenance; rejected embeddings/semantic-similarity on the
+  dependency/vendor cost, same call parked elsewhere in the portfolio).
+
 ### Open / next
-- **Phase 1 complete; stopped for approval per the contract.** Next is Phase 2 — citation-span verification, decided
-  in AB-DEC 007 (span-check design) *before* coding, built first and tested deepest. Awaiting Trevor's go.
+- **Phase 2 complete.** Next is Phase 3 — cost & latency computed offline from a cached run + the versioned,
+  compliance-readable audit log (`run.audit_log()`), then `spancheck score <audit.json>` recomputing metrics with no
+  network. Proceeding per Trevor's "no need for approval" standing note, but the contract's phase-boundary stop still
+  holds if he wants to review first.

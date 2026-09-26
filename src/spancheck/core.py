@@ -52,12 +52,15 @@ class CaseResult:
 
 
 def default_graders():
-    """The deterministic Phase-1 grader set applied when `evaluate` is called without explicit graders.
+    """The deterministic grader set applied when `evaluate` is called without explicit graders.
 
-    Citation accuracy (Phase 2) joins this set once the span verifier lands; cost/latency reporting is Phase 3.
+    Includes **citation accuracy** (Phase 2): on the tool's own thesis, an answer that cites nothing verifiable scores
+    zero there by default (`require_citation=True`). A caller who doesn't want that supplies their own grader list.
+    Cost/latency reporting is Phase 3; the calibrated LLM-judge is Phase 4.
     """
     from . import graders as g
-    return [g.abstention_correct(), g.groundedness(), g.no_pii()]
+    from .span import citation_accuracy
+    return [g.abstention_correct(), g.groundedness(), g.no_pii(), citation_accuracy()]
 
 
 def evaluate(cases, system, graders=None, on_case=None, retries=0, backoff=3.0, delay=0.0):
