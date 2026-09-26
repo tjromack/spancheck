@@ -1,31 +1,37 @@
 """spancheck — score a grounded-answer system on citation accuracy, abstention correctness,
 hallucination rate, cost and latency, and emit an audit log a compliance reviewer can read.
 
-Scaffold stage: the package is installable and the CLI entry point resolves, but the public
-API (`Case`, `evaluate`, `adapter`, `Run`, …) is not implemented yet. It lands in Phase 1
-(see TODO.md), ported and generalised from `eval-lab/evallab` per DECISIONS.md AB-DEC 002.
+Public API (Phase 1 — the ported measurement core + the thin adapter contract):
 
-The intended public surface, once shipped:
+    from spancheck import Case, evaluate, adapter, Run, Scorecard, gate, diff
 
-    from spancheck import Case, evaluate, adapter
+Deterministic graders live in `spancheck.graders`. Citation-span verification (the capability this build exists to
+add) lands in Phase 2; the versioned audit log in Phase 3; the calibrated LLM-judge in Phase 4. See TODO.md.
 
-Design pins live in CLAUDE.md; nothing here hard-codes a model provider or depends on any
-other project's internals.
+Nothing here hard-codes a model provider or depends on any other project's internals (CLAUDE.md design pins).
 """
 from __future__ import annotations
 
+from .adapter import Output, adapter, normalize
+from .core import (
+    Case,
+    GradeResult,
+    CaseResult,
+    Run,
+    Scorecard,
+    evaluate,
+    run_eval,
+    diff,
+    gate,
+    default_graders,
+)
+from . import graders
+
 __version__ = "0.0.1"
 
-# The public API is declared here so the target is unambiguous; imports are added as each
-# name is implemented (Phase 1+). Referencing one before then raises a clear NotImplementedError
-# rather than a bare ImportError.
-__all__ = ["Case", "evaluate", "adapter", "Run", "Scorecard", "gate", "diff"]
-
-
-def __getattr__(name: str):  # PEP 562 — informative error while the API is still scaffolding
-    if name in __all__:
-        raise NotImplementedError(
-            f"spancheck.{name} is not implemented yet — this is the scaffold stage. "
-            f"See TODO.md (Phase 1 ports the core from evallab)."
-        )
-    raise AttributeError(f"module 'spancheck' has no attribute {name!r}")
+__all__ = [
+    # the declared public surface
+    "Case", "evaluate", "adapter", "Run", "Scorecard", "gate", "diff",
+    # supporting types + the grader library
+    "Output", "normalize", "GradeResult", "CaseResult", "run_eval", "default_graders", "graders",
+]

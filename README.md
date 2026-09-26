@@ -27,10 +27,14 @@ wrappers over it.
 
 ## Status
 
-**Scaffolding.** Decisions are recorded (`DECISIONS.md`), the contract is set (`CLAUDE.md`), and the build plan is in
-`TODO.md`. No metric implementation has shipped yet. This section will carry the real, measured numbers once the
-capability lands — until then any figure here would be invented, and this project does not ship invented numbers
-(see `CLAUDE.md`).
+**Phase 1 shipped — the measurement core runs.** `Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`, the thin
+`adapter` contract, and the deterministic graders (abstention correctness, a groundedness/hallucination proxy, PII-leak,
+latency) are implemented, dependency-free, and tested (22 tests, verified from a clean `pip install -e .`). Still to
+come per `TODO.md`: **citation-span verification** (Phase 2 — the capability this build exists to add), the **versioned
+audit log** (Phase 3), and the **calibrated LLM-judge** (Phase 4).
+
+No benchmark numbers appear here yet: they arrive when `spancheck` is run end-to-end against a real target (Phase 6).
+Until measured, any figure would be invented, and this project does not ship invented numbers (see `CLAUDE.md`).
 
 ## Lineage
 
@@ -42,13 +46,14 @@ was rewritten and why, and what the harness got wrong that this fixes are record
 
 ## Quickstart
 
-> Not yet runnable — this is the intended shape of the API, recorded so the build has a target. It will be marked
-> runnable in `Status` above once the first phase ships.
+> The Phase-1 core below runs today (`pip install -e .`). Lines marked *(Phase 3)* / *(Phase 2)* are the intended shape
+> of what those phases add; see `Status` and `TODO.md`.
 
 ```python
 from spancheck import Case, evaluate, adapter
 
 # 1. Wrap your system in a thin adapter: input -> {answer, contexts, citations, usage, latency_ms}
+#    (optional — evaluate() also accepts a plain input->answer callable and times it for you)
 my_system = adapter(lambda q: my_rag_pipeline(q))
 
 # 2. Describe your test set — answerable, unanswerable, and adversarial cases
@@ -56,13 +61,14 @@ cases = [
     Case(id="q1", input="What is the notice period?", category="answerable",
          expected="30 days", meta={"answerable": True}),
     Case(id="q2", input="What is the company's revenue?", category="unanswerable",
-         meta={"answerable": False}),  # should spancheck
+         meta={"answerable": False}),  # should abstain
 ]
 
-# 3. Score it — a run is captured once, then all four metrics compute offline
+# 3. Score it — a run is captured once, then the metrics compute offline
 run = evaluate(cases, my_system)
-print(run.scorecard())          # citation accuracy, abstention correctness, hallucination rate, cost/latency
-run.audit_log("audit.json")     # the versioned record a reviewer can read
+print(run.scorecard().by_grader())   # abstention correctness, groundedness, PII-leak (+ citation accuracy in Phase 2)
+run.save("run.json")                 # persist a run for baselines / regression gating
+# run.audit_log("audit.json")        # the versioned, compliance-readable record — Phase 3
 ```
 
 ```bash

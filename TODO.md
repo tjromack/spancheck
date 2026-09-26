@@ -21,14 +21,14 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
 - [x] `git init` + first commit
 - [x] GitHub remote created + scaffold pushed → https://github.com/tjromack/spancheck
 
-## Phase 1 — the core, ported from evallab (dependency-free)
-- [ ] `Case`, `run_eval`/`evaluate`, `Run`, `Scorecard`, `diff`, `gate` — ported from `evallab/core.py`, generalised
-- [ ] the thin **adapter** interface: `adapter(callable)` normalising a system's output to
-      `{answer, contexts, citations, usage, latency_ms}`
-- [ ] deterministic graders ported from `evallab/graders.py`: `abstention_correct`, `groundedness`, `no_pii`,
-      `max_latency`, `contains`/`regex_match`
-- [ ] LINEAGE entries for each ported piece (unchanged vs rewritten + why)
-- [ ] tests for the ported core; **stop for approval**
+## Phase 1 — the core, ported from evallab (dependency-free) ✅ (2026-09-26)
+- [x] `Case`, `run_eval`/`evaluate`, `Run`, `Scorecard`, `diff`, `gate` — ported from `evallab/core.py`, generalised (`core.py`)
+- [x] the thin **adapter** interface (`adapter.py`): `adapter(callable)` + `normalize()` → the typed `Output`
+      `{answer, contexts, citations, usage, latency_ms, abstained, raw}`; `evaluate()` times every call (AB-DEC 006)
+- [x] deterministic graders (`graders.py`): `abstention_correct`, `groundedness`, `no_pii`, `max_latency`,
+      `contains`/`regex_match`, `expected_contains` — reading the `Output`
+- [x] LINEAGE entries (carried-over vs rewritten + why); AB-DEC 006 for the `Output` contract
+- [x] tests: 22 pass; verified from a clean `pip install -e .` venv (no PYTHONPATH). **← stop for approval before Phase 2**
 
 ## Phase 2 — citation-span verification (the new capability — deepest tests)
 - [ ] AB-DEC 006: the span-check design (offset-based? substring? semantic? — decided and written before coding)

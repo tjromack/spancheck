@@ -86,5 +86,26 @@ rename, before a release fixes the name in an install base.
   original record; the incidental project-name references in AB-DEC 003–004 were updated to `spancheck` for
   consistency (their *decisions* are unchanged).
 
+## AB-DEC 006 — The normalised adapter `Output` contract (2026-09-26, Phase 1)
+**Status:** Decided.
+
+`evallab` let a system return either a bare string or a loose dict, and each grader dug out what it needed
+(`output.get("answer")`, `output.get("contexts")`, …). That was fine for one in-repo lab but is too loose for a
+library other people point at their own systems: cost/latency and citations were second-class, and nothing guaranteed
+a captured run held what offline scoring needs.
+
+**Decision:** normalise every system return **once** into a typed `Output` dataclass —
+`{answer, contexts, citations, usage, latency_ms, abstained, raw}` (`adapter.py`). `normalize()` coerces str / dict /
+`Output` into it (idempotent on `Output`); `adapter()` wraps a caller's `input->answer` callable and times it; and
+`evaluate()` times every call and injects `latency_ms` when the system doesn't supply one. Graders read the `Output`,
+never a raw dict.
+
+- **Why:** it makes design pin #3 (every metric computable offline from a captured run) true by construction — a run
+  always carries answer + contexts + citations + usage + latency — and gives Phase 2's citation-span verifier a fixed
+  place (`Output.citations`) to read from. `raw` preserves the untouched original for the Phase-3 audit log.
+- **Rejected:** keeping evallab's loose dict (too fragile a public contract); requiring callers to build the dataclass
+  themselves (worse ergonomics than "hand us a function"). The adapter stays *thin* — it normalises and times, nothing
+  more, so there is still no provider lock-in (design pin #2).
+
 ---
-*Next entry = AB-DEC 006 (the citation-span verification design, once the API is sketched).*
+*Next entry = AB-DEC 007 (the citation-span verification design, once the API is sketched).*

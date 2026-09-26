@@ -1,8 +1,6 @@
-"""Scaffold smoke tests — the package installs, imports, and the CLI surface resolves.
+"""Package-shape smoke tests: it imports, exposes its public surface, and the CLI resolves.
 
-These are deliberately minimal: they assert the shape is in place, not that any metric works
-(the metrics land in Phase 1+; see TODO.md). Real behavioural tests — with the citation-span
-verifier tested deepest — arrive with the code they cover.
+Behavioural coverage of the measurement core lives in test_core.py.
 """
 import subprocess
 import sys
@@ -16,18 +14,12 @@ def test_version_is_exposed():
     assert isinstance(spancheck.__version__, str) and spancheck.__version__
 
 
-def test_public_api_is_declared():
-    # The public surface is named now so the build target is unambiguous.
-    assert set(spancheck.__all__) == {"Case", "evaluate", "adapter", "Run", "Scorecard", "gate", "diff"}
+def test_public_surface_is_importable():
+    for name in ["Case", "evaluate", "adapter", "Run", "Scorecard", "gate", "diff"]:
+        assert hasattr(spancheck, name), f"missing public name: {name}"
 
 
-def test_declared_api_raises_informative_error_until_implemented():
-    # Referencing a not-yet-built name fails loudly with guidance, not a bare ImportError.
-    with pytest.raises(NotImplementedError):
-        _ = spancheck.evaluate
-
-
-def test_unknown_attribute_still_raises_attribute_error():
+def test_unknown_attribute_raises_attribute_error():
     with pytest.raises(AttributeError):
         _ = spancheck.does_not_exist
 

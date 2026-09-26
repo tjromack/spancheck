@@ -26,7 +26,10 @@ with the commit that lands them.
 
 ---
 
-## Carried over (planned)
+## Carried over — **landed in Phase 1 (2026-09-26)** unless noted
+
+The `Case`/`Run`/`Scorecard`/`diff`/`gate` core and the deterministic graders below were ported from `evallab`
+essentially verbatim (logic and regexes unchanged); the only structural change was the read path (see *Rewritten*).
 
 | Piece | From | Notes |
 |---|---|---|
@@ -38,7 +41,14 @@ with the commit that lands them.
 | the four-category case taxonomy | `project-suver/eval/` | taxonomy only (answerable/unanswerable/adversarial/sensitive), not the coupled assertions |
 | calibrate-don't-trust discipline for the judge; human gold set | `harness` | the credibility move the harness already proved (agreement 1.00) |
 
-## Rewritten (planned)
+## Rewritten — **output shape + timing landed in Phase 1 (2026-09-26)**
+
+Landed this phase: the normalised **`Output`** dataclass (`adapter.py`) replaces evallab's loose str-or-dict — every
+grader now reads `Output.answer/contexts/citations/usage/latency_ms/abstained` via `normalize()`, so cost/latency and
+citations are first-class rather than dug out ad hoc (DECISIONS AB-DEC 006). `evaluate()` **times every system call**
+and injects `latency_ms` when the system doesn't supply it, so a captured run always has what the offline metrics need
+(design pin #3). Provider decoupling holds: the core calls only a caller-supplied `input->output` callable. The
+versioned audit-log schema and the file-based judge prompts are still **planned** (Phases 3 and 4).
 
 | Piece | From | Why it changes |
 |---|---|---|
@@ -57,7 +67,9 @@ with the commit that lands them.
 
 ## What the harness got wrong that this fixes (to be filled honestly as discovered)
 
-- *(planned)* the harness is a running app bound to a single target; the reusable core was buried in it and in
-  `evallab`, so the "points at any LLM through a thin adapter" claim was more true of the *lab* than of the shipped
-  harness. `spancheck` makes the reusable thing the actual deliverable.
+- **Confirmed in Phase 1:** the harness is a running app bound to a single target, and the reusable core was buried in
+  it and in `evallab`, so the "points at any LLM through a thin adapter" claim was more true of the *lab* than of the
+  shipped harness. Extracting the core into `spancheck` (a dependency-free package with a pinned adapter contract that
+  installs clean and scores a black-box system in three lines) makes the reusable thing the actual deliverable — which
+  is precisely the claim the harness README made but its shape didn't quite honour.
 - *(TKTK — recorded as the port surfaces real ones. No invented deltas.)*
