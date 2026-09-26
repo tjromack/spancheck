@@ -26,6 +26,7 @@ from .core import (
     default_graders,
 )
 from .span import citation_accuracy, verify_citation, CitationVerdict
+from .audit import build_audit_log, cost_latency, SCHEMA_VERSION
 from . import graders
 
 __version__ = "0.0.1"
@@ -35,6 +36,8 @@ __all__ = [
     "Case", "evaluate", "adapter", "Run", "Scorecard", "gate", "diff",
     # citation-span verification (the capability spancheck is named for)
     "citation_accuracy", "verify_citation", "CitationVerdict",
+    # cost/latency + the versioned audit log
+    "build_audit_log", "cost_latency", "SCHEMA_VERSION",
     # supporting types + the grader library
     "Output", "normalize", "GradeResult", "CaseResult", "run_eval", "default_graders", "graders",
 ]

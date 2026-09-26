@@ -27,13 +27,16 @@ wrappers over it.
 
 ## Status
 
-**Phases 1–2 shipped.** The measurement core (`Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`), the thin
+**Phases 1–3 shipped.** The measurement core (`Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`), the thin
 `adapter` contract, the deterministic graders (abstention correctness, groundedness/hallucination proxy, PII-leak,
-latency), and — the capability this build exists to add — **citation-span verification** are implemented,
-dependency-free, and tested (37 tests, verified from a clean `pip install -e .`). Citation verification splits into
-**provenance** (is the cited span really in the retrieved context, verbatim?) and **support** (does the span cover the
-claim?); both are deterministic and both must hold, so a fabricated quote or a right-answer-wrong-citation cannot pass.
-Still to come per `TODO.md`: the **versioned audit log** (Phase 3) and the **calibrated LLM-judge** (Phase 4).
+latency), **citation-span verification** — the capability this build exists to add — and the **cost/latency +
+versioned audit log** layer are implemented, dependency-free, and tested (49 tests, verified from a clean
+`pip install -e .`). Citation verification splits into **provenance** (is the cited span really in the retrieved
+context, verbatim?) and **support** (does the span cover the claim?); both are deterministic and both must hold, so a
+fabricated quote or a right-answer-wrong-citation cannot pass. A captured run re-scores **offline** — change a
+threshold or add a grader with no second call to the system (`Run.rescore`) — and `run.audit_log()` emits a versioned,
+self-describing record with per-citation verdicts (schema in [`docs/AUDIT-LOG.md`](docs/AUDIT-LOG.md)). Still to come
+per `TODO.md`: the **calibrated LLM-judge** (Phase 4) and the **CLI + GitHub Action** wrappers (Phase 5).
 
 No benchmark numbers appear here yet: they arrive when `spancheck` is run end-to-end against a real target (Phase 6).
 Until measured, any figure would be invented, and this project does not ship invented numbers (see `CLAUDE.md`).
@@ -52,7 +55,7 @@ was rewritten and why, and what the harness got wrong that this fixes are record
 > of what those phases add; see `Status` and `TODO.md`.
 
 ```python
-from spancheck import Case, evaluate, adapter
+from spancheck import Case, evaluate, adapter, citation_accuracy
 
 # 1. Wrap your system in a thin adapter: input -> {answer, contexts, citations, usage, latency_ms}
 #    (optional — evaluate() also accepts a plain input->answer callable and times it for you)
@@ -70,7 +73,8 @@ cases = [
 run = evaluate(cases, my_system)
 print(run.scorecard().by_grader())   # citation accuracy, abstention correctness, groundedness, PII-leak
 run.save("run.json")                 # persist a run for baselines / regression gating
-# run.audit_log("audit.json")        # the versioned, compliance-readable record — Phase 3
+run.audit_log("audit.json")          # the versioned, compliance-readable record (per-citation verdicts + cost/latency)
+run.rescore([citation_accuracy(support_threshold=0.8)])  # re-score the SAME run offline — no system call
 ```
 
 ```bash

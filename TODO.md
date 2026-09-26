@@ -41,11 +41,16 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
 - [x] LINEAGE: recorded as the net-new capability the harness/evallab never had
 - [x] 37 tests pass. **← stop for approval before Phase 3**
 
-## Phase 3 — cost & latency + the versioned audit log
-- [ ] cost/latency computed from a cached run, no network (design pin #3)
-- [ ] the versioned audit-log schema (`schema_version`) + `run.audit_log(path)` — the compliance-readable record
-- [ ] `spancheck score <audit.json>` recomputes every metric offline from the cache
-- [ ] **stop for approval**
+## Phase 3 — cost & latency + the versioned audit log ✅ (2026-09-26)
+- [x] cost/latency computed from a cached run, no network (`audit.cost_latency`): latency total/mean/p50/p95/max;
+      tokens summed; `cost_usd` only when pricing supplied or usage carried it (never invented)
+- [x] the versioned audit-log schema (`schema_version` "1.0") + `run.audit_log(path)` — self-describing per case +
+      per-citation verdicts; documented in `docs/AUDIT-LOG.md` (AB-DEC 008)
+- [x] offline re-scoring (`Run.rescore(graders)`) — change a threshold / add a grader with no system call; `Run.load`
+      round-trips the `Output` + case meta so a saved run is re-gradable
+- [~] `spancheck score <audit.json>` — the **library** recompute is done (`rescore` / `cost_latency` / `audit_log`);
+      the CLI wrapper is wired in **Phase 5** (library-first, CLI-second)
+- [x] 49 tests pass. **← stop for approval before Phase 4**
 
 ## Phase 4 — the LLM-judge (optional, calibrated, file-based prompts)
 - [ ] judge prompts as version-controlled files (design pin #5); score records prompt version + model

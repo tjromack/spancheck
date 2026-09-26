@@ -95,8 +95,35 @@ Raw material for the case study and any later writing — kept honest and specif
   with the judge as the entailment upgrade; strict verbatim provenance; rejected embeddings/semantic-similarity on the
   dependency/vendor cost, same call parked elsewhere in the portfolio).
 
+### Phase 3 — shipped this session (cost/latency + the versioned audit log)
+- Wrote **AB-DEC 008** first: cost/latency aggregated offline from the captured `Output`; a versioned
+  (`schema_version` "1.0") audit log aimed at a *reviewer*, with per-citation verdicts; and offline re-scoring — the
+  concrete pay-off of pinning the output shape in Phase 1.
+- Built `audit.py` (`cost_latency`, `build_audit_log`) + `Run.rescore()` / `Run.audit_log()` / `Run.cost_latency()`.
+  Made `CaseResult` self-describing (input/expected/meta) and `Run.load()` reconstruct the `Output`, so a saved run
+  round-trips into a fully re-gradable object. Documented the schema in `docs/AUDIT-LOG.md` (the "compliance reviewer
+  can read it" claim, made legible).
+- **49 tests** (12 new): latency percentiles, tokens summed, `cost_usd` null-without-pricing / computed-with-pricing /
+  summed-from-explicit; audit-log shape + version + per-citation verdicts + valid-JSON write; and — the headline —
+  **re-scoring the same run at a stricter threshold flips a result with no system call.**
+
+### Learnings (Phase 3)
+- **"No invented numbers" became a code rule, not a slogan.** `cost_usd` is `null` unless the caller supplies a price
+  table or the run carried an explicit cost — spancheck refuses to bake in a price constant that would drift. A test
+  pins the null-without-pricing behaviour, so the discipline is enforced, not just documented.
+- **The Phase-1 output contract paid its rent this phase.** Because answer+contexts+citations+usage+latency were
+  captured once as a typed `Output`, cost/latency, the audit log, *and* offline re-scoring all fell out without a
+  second system call. The "capture once, re-score offline" pin went from aspiration to a demonstrated `rescore()`.
+- **A versioned schema + a schema doc is the difference between "we log stuff" and "a reviewer can read it."** Writing
+  `docs/AUDIT-LOG.md` with the `schema_version` bump rule is a small artefact that makes the compliance claim concrete.
+
+### Decisions (added)
+- **AB-DEC 008** — cost/latency + the versioned audit log (offline; `schema_version` "1.0", major-bump-on-break;
+  per-citation verdicts; `Run.rescore` for offline re-grading; rejected a built-in price table and a save()-identical
+  log).
+
 ### Open / next
-- **Phase 2 complete.** Next is Phase 3 — cost & latency computed offline from a cached run + the versioned,
-  compliance-readable audit log (`run.audit_log()`), then `spancheck score <audit.json>` recomputing metrics with no
-  network. Proceeding per Trevor's "no need for approval" standing note, but the contract's phase-boundary stop still
-  holds if he wants to review first.
+- **Phase 3 complete.** Next is Phase 4 — the calibrated LLM-judge for the qualitative residue (true entailment, the
+  Phase-2 support-proxy's blind spot), with prompts in **version-controlled files** (design pin #5) and a calibration
+  harness reporting judge-vs-human agreement (measured, not invented). This is the first phase that *can* touch a
+  provider — but via a caller-supplied callable, stub by default (no lock-in). Proceeding per Trevor's standing note.

@@ -46,9 +46,17 @@ class CaseResult:
     output: object          # an Output (or None on error)
     grades: list            # list[GradeResult]
     error: str = None
+    # stored so a captured case is self-describing and can be re-graded offline (AB-DEC 008)
+    input: object = None
+    expected: object = None
+    meta: dict = field(default_factory=dict)
 
     def output_dict(self):
         return self.output.to_dict() if isinstance(self.output, Output) else self.output
+
+    def as_case(self) -> "Case":
+        """Reconstruct the originating Case (for offline re-grading)."""
+        return Case(self.case_id, self.input, self.category, self.expected, dict(self.meta or {}))
 
 
 def default_graders():
@@ -93,7 +101,8 @@ def evaluate(cases, system, graders=None, on_case=None, retries=0, backoff=3.0, 
                 out, grades, err = None, [], repr(e)
                 if attempt < retries:
                     time.sleep(backoff * (attempt + 1))
-        cr = CaseResult(c.id, c.category, out, grades, err)
+        cr = CaseResult(c.id, c.category, out, grades, err,
+                        input=c.input, expected=c.expected, meta=dict(c.meta or {}))
         results.append(cr)
         if on_case:
             on_case(cr)
@@ -114,10 +123,16 @@ class Run:
         return Scorecard(self.results)
 
     # ---- persistence (for baselines / regression gating). The versioned, compliance-readable
-    #      audit log is a superset of this and lands in Phase 3 (`audit_log()`). ----
+    #      audit log (`audit_log()`) is a superset of this. ----
     def to_dict(self):
+        def _safe(v):
+            try:
+                json.dumps(v); return v
+            except (TypeError, ValueError):
+                return repr(v)
         return {"results": [
             {"case_id": r.case_id, "category": r.category, "error": r.error,
+             "input": _safe(r.input), "expected": _safe(r.expected), "meta": _safe(r.meta),
              "output": r.output_dict(),
              "grades": [asdict(g) for g in r.grades]} for r in self.results]}
 
@@ -126,13 +141,50 @@ class Run:
             json.dump(self.to_dict(), f, indent=2)
 
     @staticmethod
+    def _restore_output(out):
+        """Reconstruct an Output from its JSON dict (so a loaded run is re-gradable offline)."""
+        if isinstance(out, dict):
+            fields = {"answer", "contexts", "citations", "usage", "latency_ms", "abstained", "raw"}
+            return Output(**{k: v for k, v in out.items() if k in fields})
+        return out
+
+    @staticmethod
     def load(path):
         with open(path, "r", encoding="utf-8") as f:
             d = json.load(f)
-        results = [CaseResult(r["case_id"], r.get("category", "default"), r.get("output"),
-                              [GradeResult(**g) for g in r["grades"]], r.get("error"))
+        results = [CaseResult(r["case_id"], r.get("category", "default"), Run._restore_output(r.get("output")),
+                              [GradeResult(**g) for g in r["grades"]], r.get("error"),
+                              input=r.get("input"), expected=r.get("expected"), meta=r.get("meta") or {})
                    for r in d["results"]]
         return Run(results)
+
+    def rescore(self, graders):
+        """Re-apply `graders` to the captured outputs with NO system call (design pin #3).
+
+        Errored cases (no output) are carried through unchanged. Everything a grader needs — the answer, contexts,
+        citations, and the case's meta/expected — is in the captured run, so a threshold change or a new grader is
+        scored offline against the same run.
+        """
+        out = []
+        for cr in self.results:
+            if cr.output is None:
+                out.append(cr); continue
+            case = cr.as_case()
+            grades = [g(case, cr.output) for g in graders]
+            out.append(CaseResult(cr.case_id, cr.category, cr.output, grades, cr.error,
+                                  input=cr.input, expected=cr.expected, meta=cr.meta))
+        return Run(out)
+
+    def cost_latency(self, pricing=None):
+        """Cost and latency aggregates computed offline from the captured usage/latency (Phase 3)."""
+        from .audit import cost_latency
+        return cost_latency(self, pricing=pricing)
+
+    def audit_log(self, path=None, *, pricing=None, verify_citations=True):
+        """Build the versioned, compliance-readable audit log (a superset of `to_dict`). Writes to `path` if given
+        and returns the dict either way. See docs/AUDIT-LOG.md for the schema."""
+        from .audit import build_audit_log
+        return build_audit_log(self, path=path, pricing=pricing, verify_citations=verify_citations)
 
 
 class Scorecard:

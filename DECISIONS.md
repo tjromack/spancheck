@@ -157,5 +157,37 @@ that asserts a claim with **no citations** fails (`require_citation=True` defaul
   invite drift on the one check that should never drift. The judge is reserved for the qualitative residue (support /
   entailment), never for "is this quote real."
 
+## AB-DEC 008 — Cost/latency + the versioned audit log (2026-09-26, Phase 3)
+**Status:** Decided.
+
+**Two deliverables, one idea:** a captured run holds everything, so both the metrics *and* the compliance record can be
+produced offline, with no second call to the system (design pin #3).
+
+**Cost & latency (offline).** The `Output` already carries `usage` and `latency_ms` (Phase 1). Phase 3 aggregates them:
+latency → total / mean / p50 / p95 / max across cases; cost → summed tokens (input/output/total) and any explicit
+`cost_usd`. If — and only if — a caller passes a `pricing` table (`{input_per_1k, output_per_1k}`) is a dollar cost
+*computed* from tokens; with no pricing, tokens are reported and cost is left blank rather than invented (no invented
+numbers, CLAUDE.md).
+
+**The versioned audit log.** A superset of the Phase-1 `Run.save()` dump, aimed at a *reviewer*, not an internal
+debugger. Top-level `schema_version` (starts **"1.0"**); a breaking change to the shape is a **major** bump (design
+pin #4). It carries, per case: the input, expected, category and meta (so a case is self-describing and re-gradable),
+the full `Output`, every grade with its detail, and — the part a compliance reader actually needs — the **per-citation
+verdicts** (span, span_found, claim_supported, reason), recomputed from the cached output. The schema is documented in
+`docs/AUDIT-LOG.md` so the contract is legible, not implied.
+
+**Offline re-scoring.** Because the cached `Output` holds answer + contexts + citations, `Run.rescore(graders)` re-runs
+any graders against a captured run with **no system call** — so you can change a threshold or add a grader and get new
+numbers without paying for or perturbing the target again. This is the concrete pay-off of pinning the output shape in
+Phase 1, and what the Phase-5 `spancheck score <audit.json>` CLI will wrap.
+
+**To make cases self-describing / re-gradable,** `CaseResult` now also stores `input`, `expected`, and `meta` (needed
+because e.g. `abstention_correct` reads `meta["answerable"]`). `Run.load()` reconstructs the `Output` (and the `Case`)
+from JSON so a saved run round-trips into a fully re-scorable object.
+
+**Rejected:** computing dollar cost from a built-in price table (prices drift and vary by contract — a stale constant
+would be an invented number; pricing is the caller's input). And keeping the audit log identical to `save()` (a
+reviewer needs the per-citation *why* and a stable, versioned shape, not a raw grade dump).
+
 ---
-*Next entry = AB-DEC 008.*
+*Next entry = AB-DEC 009.*
