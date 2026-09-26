@@ -39,7 +39,8 @@ essentially verbatim (logic and regexes unchanged); the only structural change w
 | `diff` + `gate` (regression gate: thresholds + max_regression vs baseline) | `evallab/core.py` | the CI story reuses this directly |
 | deterministic graders: `abstention_correct`, `groundedness`, `no_pii`, `max_latency` | `evallab/graders.py` | generalised to read from the normalised adapter output |
 | the four-category case taxonomy | `project-suver/eval/` | taxonomy only (answerable/unanswerable/adversarial/sensitive), not the coupled assertions |
-| calibrate-don't-trust discipline for the judge; human gold set | `harness` | the credibility move the harness already proved (agreement 1.00) |
+| calibrate-don't-trust discipline for the judge; human gold set | `harness` | the credibility move the harness already proved (agreement 1.00) — **realised in Phase 4** as `calibrate_judge` + `python -m spancheck.calibrate` (stub baseline 0.75; real number via a keyed run) |
+| the LLM-as-judge concept | `evallab.graders.llm_judge` / `harness` | **carried, then re-homed (Phase 4):** evallab took an *inline* rubric string; `spancheck` moves prompts to version-controlled files (`prompts/entailment_v1.txt`), stamps every verdict with `prompt_version` + `model`, and reaches a model only through a caller-supplied provider (stub default) — no vendor hard-coded (AB-DEC 009, design pins #2/#5). The judge is scoped to **entailment** — the exact blind spot of the Phase-2 lexical proxy — not a general-purpose grader. |
 
 ## Rewritten — **output shape + timing landed in Phase 1 (2026-09-26)**
 

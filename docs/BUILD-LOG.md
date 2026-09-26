@@ -122,8 +122,44 @@ Raw material for the case study and any later writing — kept honest and specif
   per-citation verdicts; `Run.rescore` for offline re-grading; rejected a built-in price table and a save()-identical
   log).
 
+### Phase 4 — shipped this session (the calibrated LLM-judge)
+- Wrote **AB-DEC 009** first: the judge upgrades **support only** (provenance stays deterministic, never judged); a
+  provider seam (`provider(prompt)->str`, stub default, lazy optional `anthropic_provider`, no hard vendor dep);
+  prompts in version-controlled files with every verdict stamped `prompt_version` + `model`; one entailment prompt
+  serving both citation support and answer-level groundedness; calibration measured, never asserted; judge opt-in.
+- Built `provider.py`, `judge.py` (`judge_entailment` / `judge_support` / `llm_judge` / `load_prompt`),
+  `prompts/entailment_v1.txt` (shipped as package-data), and `calibrate.py` (`calibrate_judge` +
+  `python -m spancheck.calibrate`) with a synthetic public gold set (`calibration/entailment_gold.jsonl`). Extended
+  `citation_accuracy` / `verify_citation` with an optional `support_fn` so the judge slots in without touching
+  provenance.
+- **59 tests** (10 new). The headline: `citation_accuracy(support_fn=judge_support())` **fails the negation
+  contradiction that the Phase-2 lexical proxy passed** — the blind spot named in Phase 2 is now closed by the opt-in
+  judge, and both behaviours are pinned by tests.
+- **Stub calibration measured: agreement 0.75 (9/12)** on the gold set — and the only three misses are the
+  paraphrase/morphology cases (twenty≈20, renew≈renews, governed≈governing law). A clean, honest picture: the
+  deterministic stub nails negation + lexical/reordered support and misses meaning-level paraphrase, which is exactly
+  the gap a real model closes.
+
+### Learnings (Phase 4)
+- **"Calibrated before trusted" is now a runnable command, not a value statement.** `python -m spancheck.calibrate`
+  prints agreement + a confusion matrix + per-row hits/misses. The stub's 0.75 with legible misses is more convincing
+  than a bare "we calibrate the judge" — you can see *what* it gets wrong and why.
+- **The provider seam kept the dependency-free promise intact even while adding a model.** `anthropic` is imported
+  lazily inside `anthropic_provider()`; the package still has zero hard dependencies, and the whole test suite runs on
+  the stub with no key. Design pin #2 held under the phase most likely to break it.
+- **One prompt, two graders.** Entailment ("does SOURCE support STATEMENT?") generalises to both citation support
+  (span→claim) and answer groundedness (contexts→answer), so pin #5 (prompts in files) cost exactly one file.
+
+### Decisions (added)
+- **AB-DEC 009** — the calibrated LLM-judge (support-only upgrade; provider seam, stub default, lazy optional vendor
+  helper; versioned file prompts; measured calibration; judge opt-in; rejected inline rubrics, a hard Anthropic dep,
+  and judging provenance).
+
+### Manual / [Trevor]
+- **Optional keyed calibration run** for the *real* agreement number (the credibility figure to quote, mirroring the
+  harness's 1.00): `python -m spancheck.calibrate --real --model claude-sonnet-5` with `ANTHROPIC_API_KEY` set. The
+  build does not require it; the stub baseline (0.75) is what's committed until a real run is recorded.
+
 ### Open / next
-- **Phase 3 complete.** Next is Phase 4 — the calibrated LLM-judge for the qualitative residue (true entailment, the
-  Phase-2 support-proxy's blind spot), with prompts in **version-controlled files** (design pin #5) and a calibration
-  harness reporting judge-vs-human agreement (measured, not invented). This is the first phase that *can* touch a
-  provider — but via a caller-supplied callable, stub by default (no lock-in). Proceeding per Trevor's standing note.
+- **Phase 4 complete.** Next is Phase 5 — the CLI + GitHub Action thin wrappers (`spancheck run` / `score` / `gate`;
+  `action.yml` failing a PR on a regression via `gate`). Proceeding per Trevor's standing note.

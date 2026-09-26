@@ -189,5 +189,40 @@ from JSON so a saved run round-trips into a fully re-scorable object.
 would be an invented number; pricing is the caller's input). And keeping the audit log identical to `save()` (a
 reviewer needs the per-citation *why* and a stable, versioned shape, not a raw grade dump).
 
+## AB-DEC 009 — The calibrated LLM-judge (2026-09-26, Phase 4)
+**Status:** Decided.
+
+**What the judge is for:** the qualitative residue the deterministic checks can't reach — chiefly **entailment**, the
+Phase-2 support proxy's blind spot (a span that shares a claim's words but *contradicts* it, or *supports it by
+paraphrase* with little word overlap). The judge upgrades **support only**; provenance stays deterministic and is never
+judged (AB-DEC 007).
+
+**The provider seam (design pin #2 — no lock-in).** The judge calls a model through a caller-supplied
+`provider(prompt) -> str` callable. Default is **None → a deterministic offline stub**, so tests and CI never need a
+key. An optional `anthropic_provider()` helper is provided but imports the SDK **lazily**, only when called — the
+package keeps no hard vendor dependency.
+
+**Prompts in version-controlled files (design pin #5).** Judge prompts live in `src/spancheck/prompts/*.txt`
+(`entailment_v1.txt`), not inline in code. A rubric change is a reviewable diff and a version bump, and **every judge
+verdict records its `prompt_version` and `model`** so a score is always attributable.
+
+**One prompt, two uses.** Entailment generalises: "does SOURCE support STATEMENT?" With (span, claim) it upgrades
+citation support (`judge_support()` → a support function `citation_accuracy` can use in place of the lexical proxy);
+with (contexts, answer) it is an answer-level groundedness grader (`llm_judge`). One prompt file, no duplication.
+
+**Calibration is measured, never asserted (no invented numbers).** `calibrate_judge(gold, provider)` runs the judge
+over a human-labelled gold set and reports **agreement** + a confusion count. The stub gives a deterministic baseline
+(it catches negation but misses paraphrase/morphology — an honest, visible limit); the real agreement number comes from
+a keyed run against a real model (`python -m spancheck.calibrate --real`), the credibility move inherited from the
+harness. The gold set (`calibration/entailment_gold.jsonl`) is synthetic and public.
+
+**The judge is opt-in, not default.** `default_graders()` stays fully deterministic and offline; a caller adds the
+judge explicitly (`citation_accuracy(support_fn=judge_support(provider=...))` or `llm_judge(provider=...)`). Determinism
+carries the load; the judge is the upgrade, calibrated before it is trusted.
+
+**Rejected:** an inline rubric string (violates pin #5 — not reviewable/versioned); a hard Anthropic dependency
+(violates pin #2); trusting the judge without calibration (the whole point is the measured agreement number); judging
+provenance (a factual, checkable property must never drift).
+
 ---
-*Next entry = AB-DEC 009.*
+*Next entry = AB-DEC 010.*

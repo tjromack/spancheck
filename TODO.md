@@ -52,10 +52,19 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
       the CLI wrapper is wired in **Phase 5** (library-first, CLI-second)
 - [x] 49 tests pass. **← stop for approval before Phase 4**
 
-## Phase 4 — the LLM-judge (optional, calibrated, file-based prompts)
-- [ ] judge prompts as version-controlled files (design pin #5); score records prompt version + model
-- [ ] calibration harness: judge vs a human gold set, agreement reported (no number invented — measured)
-- [ ] **stop for approval**
+## Phase 4 — the LLM-judge (optional, calibrated, file-based prompts) ✅ (2026-09-26)
+- [x] provider seam (`provider.py`): `provider(prompt)->str`; stub by default; lazy optional `anthropic_provider()` —
+      no hard vendor dependency, no lock-in (design pin #2)
+- [x] judge prompts as version-controlled files (`prompts/entailment_v1.txt`, shipped as package-data); every verdict
+      records `prompt_version` + `model` (design pin #5)
+- [x] `judge_entailment` + `judge_support` (upgrades `citation_accuracy` support to entailment) + `llm_judge`
+      (answer-level groundedness); one entailment prompt serves both
+- [x] calibration harness (`calibrate.py`, `python -m spancheck.calibrate`): judge vs a human gold set
+      (`calibration/entailment_gold.jsonl`), **agreement measured, not invented** — stub baseline **0.75 (9/12)**,
+      misses only the paraphrase/morphology cases
+- [x] judge stays **opt-in**; `default_graders()` remains fully offline/deterministic
+- [x] 59 tests pass. **[Trevor] optional keyed run** for the real agreement number: `python -m spancheck.calibrate --real`
+      (needs `ANTHROPIC_API_KEY`). **← stop for approval before Phase 5**
 
 ## Phase 5 — CLI + GitHub Action (thin wrappers)
 - [ ] `spancheck run` / `spancheck score` / `spancheck gate` (argparse; three-lines-of-Python parity)

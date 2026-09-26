@@ -27,19 +27,21 @@ wrappers over it.
 
 ## Status
 
-**Phases 1–3 shipped.** The measurement core (`Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`), the thin
-`adapter` contract, the deterministic graders (abstention correctness, groundedness/hallucination proxy, PII-leak,
-latency), **citation-span verification** — the capability this build exists to add — and the **cost/latency +
-versioned audit log** layer are implemented, dependency-free, and tested (49 tests, verified from a clean
-`pip install -e .`). Citation verification splits into **provenance** (is the cited span really in the retrieved
-context, verbatim?) and **support** (does the span cover the claim?); both are deterministic and both must hold, so a
-fabricated quote or a right-answer-wrong-citation cannot pass. A captured run re-scores **offline** — change a
-threshold or add a grader with no second call to the system (`Run.rescore`) — and `run.audit_log()` emits a versioned,
-self-describing record with per-citation verdicts (schema in [`docs/AUDIT-LOG.md`](docs/AUDIT-LOG.md)). Still to come
-per `TODO.md`: the **calibrated LLM-judge** (Phase 4) and the **CLI + GitHub Action** wrappers (Phase 5).
+**Phases 1–4 shipped.** The measurement core (`Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`), the thin
+`adapter` contract, the deterministic graders, **citation-span verification** — the capability this build exists to
+add — the **cost/latency + versioned audit log** layer, and the **calibrated LLM-judge** are implemented, dependency-free
+(the judge reaches a model only through a caller-supplied callable), and tested (59 tests, verified from a clean
+`pip install`). Citation verification splits into **provenance** (is the cited span really in the retrieved context,
+verbatim?) and **support** (does the span cover the claim?); both must hold, so a fabricated quote or a
+right-answer-wrong-citation cannot pass. A captured run re-scores **offline** (`Run.rescore`), and `run.audit_log()`
+emits a versioned, self-describing record with per-citation verdicts (schema in
+[`docs/AUDIT-LOG.md`](docs/AUDIT-LOG.md)). The LLM-judge is **opt-in** — the default grader set stays fully
+deterministic and offline — and is **calibrated before it is trusted**: `python -m spancheck.calibrate` measures
+judge-vs-human agreement on a gold set rather than asserting a number. Still to come per `TODO.md`: the **CLI + GitHub
+Action** wrappers (Phase 5) and an end-to-end **dogfood** against a real target (Phase 6).
 
-No benchmark numbers appear here yet: they arrive when `spancheck` is run end-to-end against a real target (Phase 6).
-Until measured, any figure would be invented, and this project does not ship invented numbers (see `CLAUDE.md`).
+No end-to-end benchmark numbers appear here yet: they arrive with the Phase-6 dogfood. Until measured, any figure would
+be invented, and this project does not ship invented numbers (see `CLAUDE.md`).
 
 ## Lineage
 
@@ -85,10 +87,12 @@ spancheck score audit.json        # recompute metrics from a cached run, no netw
 
 ## Limits — what a passing score does *not* claim
 
-- **Support is a lexical proxy, not entailment.** Citation *support* is scored by how much of the claim's wording the
-  cited span covers. It cannot see a span that shares the claim's words but **contradicts** it ("the notice period is
-  *not* 30 days"). True entailment is what the calibrated LLM-judge (Phase 4) is for; the deterministic core flags this
-  boundary rather than hiding it (there is a test that pins the false-positive).
+- **Deterministic support is a lexical proxy, not entailment.** By default, citation *support* is scored by how much of
+  the claim's wording the cited span covers — fast, offline, and unable to see a span that shares the claim's words but
+  **contradicts** it ("the notice period is *not* 30 days"). The **opt-in LLM-judge** upgrades this to true entailment
+  (`citation_accuracy(support_fn=judge_support(provider=...))`), and is **calibrated against a human gold set before it
+  is trusted** (`python -m spancheck.calibrate`). The deterministic core flags the proxy's boundary rather than hiding
+  it (a test pins the false-positive; the judge catches it).
 - **Provenance requires a verbatim quote.** A paraphrased citation fails provenance by design — a deliberate incentive
   for a system to quote its sources exactly. `spancheck` does not (yet) match a citation by meaning.
 - **A citation isn't scoped to its named source.** A cited span found in *any* retrieved context passes; tying a

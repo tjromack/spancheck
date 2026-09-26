@@ -27,6 +27,8 @@ from .core import (
 )
 from .span import citation_accuracy, verify_citation, CitationVerdict
 from .audit import build_audit_log, cost_latency, SCHEMA_VERSION
+from .judge import judge_entailment, judge_support, llm_judge, load_prompt
+from .calibrate import calibrate_judge
 from . import graders
 
 __version__ = "0.0.1"
@@ -38,6 +40,8 @@ __all__ = [
     "citation_accuracy", "verify_citation", "CitationVerdict",
     # cost/latency + the versioned audit log
     "build_audit_log", "cost_latency", "SCHEMA_VERSION",
+    # the calibrated LLM-judge (opt-in; stub by default, no provider lock-in)
+    "judge_entailment", "judge_support", "llm_judge", "load_prompt", "calibrate_judge",
     # supporting types + the grader library
     "Output", "normalize", "GradeResult", "CaseResult", "run_eval", "default_graders", "graders",
 ]

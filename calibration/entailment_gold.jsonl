@@ -1,0 +1,12 @@
+{"claim": "The notice period is 30 days.", "span": "Either party may terminate the agreement with 30 days written notice.", "label": true, "note": "exact support"}
+{"claim": "The notice period is 30 days.", "span": "The notice period is not 30 days under the amended terms.", "label": false, "note": "negation contradiction"}
+{"claim": "The notice period is 30 days.", "span": "Invoices are payable within 45 days of receipt.", "label": false, "note": "unrelated"}
+{"claim": "Employees receive 20 vacation days annually.", "span": "Staff are entitled to twenty days of paid annual leave each year.", "label": true, "note": "paraphrase support (hard for lexical)"}
+{"claim": "Late payments incur a monthly fee.", "span": "A fee is charged monthly on late payments.", "label": true, "note": "lexical support, reordered"}
+{"claim": "The contract renews automatically.", "span": "This agreement shall renew automatically unless cancelled in writing.", "label": true, "note": "morphology (renews/renew)"}
+{"claim": "The warranty lasts three years.", "span": "The product warranty covers manufacturing defects.", "label": false, "note": "topic overlap, no duration stated"}
+{"claim": "Payment is due within 45 days.", "span": "Invoices are payable within 45 days of receipt.", "label": true, "note": "paraphrase (due/payable)"}
+{"claim": "Employees are not entitled to remote work.", "span": "Employees may work remotely two days per week.", "label": false, "note": "claim negates, source affirms"}
+{"claim": "Termination requires written notice.", "span": "Either party may terminate the agreement with 30 days written notice.", "label": true, "note": "support with morphology"}
+{"claim": "The fee is 1.5% per month.", "span": "The governing law is the State of Delaware.", "label": false, "note": "unrelated"}
+{"claim": "The governing law is Delaware.", "span": "This agreement is governed by the laws of the State of Delaware.", "label": true, "note": "paraphrase/morphology support"}

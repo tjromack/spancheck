@@ -1,0 +1,15 @@
+You are a strict evaluator of whether a SOURCE passage supports a STATEMENT.
+
+STATEMENT:
+{claim}
+
+SOURCE:
+{span}
+
+Decide whether the SOURCE, on its own, supports (entails) the STATEMENT. A SOURCE that merely mentions the same topic
+but does not actually establish the STATEMENT does not support it, and a SOURCE that contradicts the STATEMENT (for
+example through a negation) does not support it. A SOURCE may support the STATEMENT through paraphrase even when few
+exact words are shared.
+
+Respond with ONLY a JSON object and nothing else:
+{"score": <a number from 0.0 to 1.0, your confidence that the SOURCE supports the STATEMENT>, "reason": "<one short sentence>"}

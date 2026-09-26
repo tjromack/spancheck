@@ -52,8 +52,14 @@ def _covers(claim: str, span: str, threshold: float):
     return frac >= threshold, round(frac, 3)
 
 
-def verify_citation(citation, contexts, answer: str = "", support_threshold: float = 0.6) -> CitationVerdict:
-    """Verify one citation against the retrieved contexts. `answer` is the default claim when the citation names none."""
+def verify_citation(citation, contexts, answer: str = "", support_threshold: float = 0.6,
+                    support_fn=None) -> CitationVerdict:
+    """Verify one citation against the retrieved contexts. `answer` is the default claim when the citation names none.
+
+    `support_fn`, if given, is a `(claim, span) -> (supported: bool, score: float)` callable used for the support check
+    instead of the built-in lexical proxy — e.g. `spancheck.judge_support(provider=...)` for model-judged entailment.
+    Provenance is always deterministic and is never delegated to a judge.
+    """
     cit = _coerce_citation(citation)
     span = cit["span"]
     if not span or not span.strip():
@@ -65,20 +71,26 @@ def verify_citation(citation, contexts, answer: str = "", support_threshold: flo
 
     # (b) support — does the span cover the claim (the cited sentence, else the whole answer)?
     claim = cit["claim"] if cit["claim"] else answer
-    supported, frac = _covers(claim, span, support_threshold)
+    if support_fn is not None:
+        supported, frac = support_fn(claim, span)
+        frac = round(float(frac), 3)
+        how = "judge"
+    else:
+        supported, frac = _covers(claim, span, support_threshold)
+        how = "lexical"
 
     ok = span_found and supported
     if not span_found:
         reason = "fabricated span: not found verbatim in the contexts"
     elif not supported:
-        reason = f"unsupported: span covers {frac} of the claim's content (< {support_threshold})"
+        reason = f"unsupported ({how}): span covers {frac} of the claim (< {support_threshold if how == 'lexical' else 'judge threshold'})"
     else:
-        reason = f"verified: span present, covers {frac} of the claim"
+        reason = f"verified ({how}): span present, support {frac}"
     return CitationVerdict(span, span_found, supported, ok, frac, reason)
 
 
 def citation_accuracy(name: str = "citation_accuracy", support_threshold: float = 0.6,
-                      pass_threshold: float = 1.0, require_citation: bool = True):
+                      pass_threshold: float = 1.0, require_citation: bool = True, support_fn=None):
     """Grader: the fraction of an answer's citations that are verified (present AND supporting).
 
     - Abstentions pass trivially (nothing cited).
@@ -86,6 +98,8 @@ def citation_accuracy(name: str = "citation_accuracy", support_threshold: float 
       claim is unverifiable.
     - `score` is the fraction of citations that are OK; the case **passes** only when that fraction >= `pass_threshold`
       (default 1.0 — one broken citation breaks the audit trail).
+    - `support_fn` (e.g. `spancheck.judge_support(provider=...)`) upgrades the support check from the lexical proxy to
+      model-judged entailment; provenance stays deterministic.
     """
     def g(case, output):
         out = output if isinstance(output, Output) else normalize(output)
@@ -99,7 +113,8 @@ def citation_accuracy(name: str = "citation_accuracy", support_threshold: float 
                 return GradeResult(name, 0.0, False, "answer makes a claim but cites no span (unverifiable)")
             return GradeResult(name, 1.0, True, "no citations present; citation not required")
 
-        verdicts = [verify_citation(c, out.contexts, out.answer, support_threshold) for c in cits]
+        verdicts = [verify_citation(c, out.contexts, out.answer, support_threshold, support_fn=support_fn)
+                    for c in cits]
         n_ok = sum(1 for v in verdicts if v.ok)
         frac = n_ok / len(verdicts)
         passed = frac >= pass_threshold
