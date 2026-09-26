@@ -1,11 +1,11 @@
 # CLAUDE.md — Operating Contract
 
-Working agreement for building `abstain` with Claude Code. Read it before each session. The decisions this contract
+Working agreement for building `spancheck` with Claude Code. Read it before each session. The decisions this contract
 assumes are already recorded in `DECISIONS.md` (AB-DEC 001–004) — read those first; do not re-open them.
 
 ## Purpose
 
-Build **`abstain`**: an installable, corpus-agnostic Python library (CLI second) that scores a grounded-answer system —
+Build **`spancheck`**: an installable, corpus-agnostic Python library (CLI second) that scores a grounded-answer system —
 any RAG or retrieval-then-answer pipeline — on the four metrics that decide whether its answers can be trusted, and
 emits an audit log a compliance reviewer can read.
 
@@ -18,7 +18,7 @@ The four metrics:
 4. **Cost & latency** — per-run tokens/dollars and wall-clock, computed from a cached run without a network call.
 
 This is a **packaging** build, not a research one: the metrics (bar citation-span) already exist scattered across
-`eval-lab/evallab` and `llm-eval-guardrails-harness`. `abstain` is the version a stranger can `pip install` and point
+`eval-lab/evallab` and `llm-eval-guardrails-harness`. `spancheck` is the version a stranger can `pip install` and point
 at their own corpus. See `LINEAGE.md` for what carried over and what was rewritten.
 
 ## Design pins (do not violate without a DECISIONS entry)
@@ -34,7 +34,7 @@ at their own corpus. See `LINEAGE.md` for what carried over and what was rewritt
    a compliance reader, not an internal dump.
 5. **Judge prompts live in version-controlled files, never inline in code.** A rubric change is a reviewable diff with
    a version stamp; a judge score always records the prompt version + model that produced it.
-6. **No dependency on Suver internals** — or on any other portfolio project's code. `abstain` is standalone. It is
+6. **No dependency on Suver internals** — or on any other portfolio project's code. `spancheck` is standalone. It is
    *dogfooded* against Suver's published case study (as a black-box target through the adapter), never *coupled* to it.
 
 ## Operating principles
@@ -52,7 +52,7 @@ at their own corpus. See `LINEAGE.md` for what carried over and what was rewritt
 ## Stack
 
 - Python 3.11+, standard library first. A hard dependency is added only with a DECISIONS entry justifying it.
-- Packaging: `pyproject.toml` (PEP 621), `src/` layout, package + import name `abstain`.
+- Packaging: `pyproject.toml` (PEP 621), `src/` layout, package + import name `spancheck`.
 - CLI: `argparse` (stdlib) — no framework.
 - GitHub Action: a thin `action.yml` shelling to the CLI.
 - `pytest` for tests; the citation-span verifier gets the deepest test coverage.

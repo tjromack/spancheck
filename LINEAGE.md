@@ -1,6 +1,6 @@
 # LINEAGE.md — what carried over, what was rewritten, what got fixed
 
-`abstain` is not written from scratch and does not pretend to be. It is the spinoff of `llm-eval-guardrails-harness`,
+`spancheck` is not written from scratch and does not pretend to be. It is the spinoff of `llm-eval-guardrails-harness`,
 extracting and generalising the measurement core that has lived inside `eval-lab/evallab`. This file is the ledger of
 that inheritance — written *as the port happens*, because it is the substance of the second case study (AB-DEC 003) and
 is near-impossible to reconstruct afterwards.
@@ -59,5 +59,5 @@ with the commit that lands them.
 
 - *(planned)* the harness is a running app bound to a single target; the reusable core was buried in it and in
   `evallab`, so the "points at any LLM through a thin adapter" claim was more true of the *lab* than of the shipped
-  harness. `abstain` makes the reusable thing the actual deliverable.
+  harness. `spancheck` makes the reusable thing the actual deliverable.
 - *(TKTK — recorded as the port surfaces real ones. No invented deltas.)*

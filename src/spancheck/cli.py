@@ -1,4 +1,4 @@
-"""abstain CLI — a thin wrapper over the library (design pin #1: library-first, CLI-second).
+"""spancheck CLI — a thin wrapper over the library (design pin #1: library-first, CLI-second).
 
 Scaffold stage: the command surface is declared so the shape is fixed, but the subcommands
 are not wired to an implementation yet (Phase 5, after the library lands). Running any
@@ -16,11 +16,11 @@ _PENDING = "not implemented yet — scaffold stage; see TODO.md"
 
 def _build_parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(
-        prog="abstain",
+        prog="spancheck",
         description="Score a grounded-answer system on citation accuracy, abstention correctness, "
                     "hallucination rate, cost and latency — with a compliance-readable audit log.",
     )
-    p.add_argument("--version", action="version", version=f"abstain {__version__}")
+    p.add_argument("--version", action="version", version=f"spancheck {__version__}")
     sub = p.add_subparsers(dest="command")
 
     run = sub.add_parser("run", help="run a test set against a target and capture an audit log")
@@ -44,7 +44,7 @@ def main(argv: list[str] | None = None) -> int:
     if not args.command:
         parser.print_help()
         return 0
-    print(f"abstain {args.command}: {_PENDING}", file=sys.stderr)
+    print(f"spancheck {args.command}: {_PENDING}", file=sys.stderr)
     return 2
 
 

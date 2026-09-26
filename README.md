@@ -1,4 +1,4 @@
-# abstain
+# spancheck
 
 > © 2026 Trevor J. Romack — **source-available for review, not open-source** ([LICENSE](LICENSE)). No reuse or
 > commercial use without permission. · tjromack@gmail.com
@@ -6,7 +6,7 @@
 **Score a grounded-answer system on citation accuracy, abstention correctness, hallucination rate, cost and latency —
 and get an audit log a compliance reviewer can read.**
 
-`abstain` is an installable, corpus-agnostic evaluation library for RAG and retrieval-then-answer pipelines. Point it
+`spancheck` is an installable, corpus-agnostic evaluation library for RAG and retrieval-then-answer pipelines. Point it
 at any system through a thin adapter, give it a test set, and it produces a scorecard on the four metrics that decide
 whether the system's answers can be trusted — plus a versioned audit log that reconstructs *why* each answer passed or
 failed.
@@ -34,7 +34,7 @@ capability lands — until then any figure here would be invented, and this proj
 
 ## Lineage
 
-`abstain` is the spinoff of [`llm-eval-guardrails-harness`](https://github.com/tjromack/llm-eval-guardrails-harness) —
+`spancheck` is the spinoff of [`llm-eval-guardrails-harness`](https://github.com/tjromack/llm-eval-guardrails-harness) —
 the version that proved the method against a single real target (a regulatory RAG copilot), with LLM-judge agreement
 1.00 against a human gold set. This package is the same method, extracted from an in-repo lab, generalised to any
 corpus, and packaged so a stranger can install it and point it at their own system. What carried over unchanged, what
@@ -46,7 +46,7 @@ was rewritten and why, and what the harness got wrong that this fixes are record
 > runnable in `Status` above once the first phase ships.
 
 ```python
-from abstain import Case, evaluate, adapter
+from spancheck import Case, evaluate, adapter
 
 # 1. Wrap your system in a thin adapter: input -> {answer, contexts, citations, usage, latency_ms}
 my_system = adapter(lambda q: my_rag_pipeline(q))
@@ -56,7 +56,7 @@ cases = [
     Case(id="q1", input="What is the notice period?", category="answerable",
          expected="30 days", meta={"answerable": True}),
     Case(id="q2", input="What is the company's revenue?", category="unanswerable",
-         meta={"answerable": False}),  # should abstain
+         meta={"answerable": False}),  # should spancheck
 ]
 
 # 3. Score it — a run is captured once, then all four metrics compute offline
@@ -67,8 +67,8 @@ run.audit_log("audit.json")     # the versioned record a reviewer can read
 
 ```bash
 # CLI (thin wrapper over the same API)
-abstain run cases.jsonl --target my_module:my_system --out audit.json
-abstain score audit.json        # recompute metrics from a cached run, no network
+spancheck run cases.jsonl --target my_module:my_system --out audit.json
+spancheck score audit.json        # recompute metrics from a cached run, no network
 ```
 
 ## Design pins

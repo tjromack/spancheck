@@ -1,10 +1,11 @@
-# abstain — decisions log
+# spancheck — decisions log
 
 > Append-only. Point-in-time record of the calls made, so they are not re-litigated. This file is written **before any
 > code** (the build packet's Step 0). Author: Trevor J. Romack.
 
 ## AB-DEC 001 — Name: `abstain` (2026-09-26)
-**Status:** Decided.
+**Status:** **Superseded by AB-DEC 005** — renamed to `spancheck` (2026-09-26). The original record is kept verbatim
+below; the reasoning for the switch is in AB-DEC 005.
 
 - The build packet's two working names were `abstain` and `groundcheck`. Checked on PyPI before writing any docs
   (the name lands in the README promise, the import path, and the GitHub Action's marketplace slug — renaming later
@@ -44,13 +45,13 @@ the packaging gap."*
 **Status:** Decided (given, not open).
 
 `llm-eval-guardrails-harness` **stays published as the first version** — the one that proved the method against a
-single real target (a regulatory RAG copilot), with judge agreement 1.00 on a human gold set. **`abstain` is the
+single real target (a regulatory RAG copilot), with judge agreement 1.00 on a human gold set. **`spancheck` is the
 spinoff it evolved into:** the same method, extracted, generalised to any corpus, and packaged. Neither supersedes the
-other in the portfolio; they read as a **sequence**, and `abstain` gets its own case study framed as that evolution.
+other in the portfolio; they read as a **sequence**, and `spancheck` gets its own case study framed as that evolution.
 
 Two consequences, executed as part of this build:
 
-- **The harness gets a small copy pass** — but only *once `abstain`'s public API is stable enough that the claim is
+- **The harness gets a small copy pass** — but only *once `spancheck`'s public API is stable enough that the claim is
   actually true.* The harness README currently claims the ground this package is being built to take ("points at any
   LLM system through a thin adapter," "this is the capstone"); those move here, and the harness is re-described as what
   it was — the version that proved the method against one real target. **Not before** the API is stable.
@@ -63,10 +64,27 @@ Two consequences, executed as part of this build:
 
 `evallab` is tracked *inside* the `ai-suite` workspace repo, so it cannot be `pip install`ed independently regardless
 of how good it is. It **stays there as the lab** — the in-repo instrument and the case-study practice (the revolving
-door of published reports). `abstain` is the **installable, corpus-agnostic library** that extracts and generalises
+door of published reports). `spancheck` is the **installable, corpus-agnostic library** that extracts and generalises
 evallab's graders + core and adds citation-span verification, with its own repo root (required for PyPI, for a
 distributable Action, and for the "clone it clean and point it at your own corpus" claim to be demonstrable). The lab
-keeps producing reports; `abstain` is the thing a stranger installs.
+keeps producing reports; `spancheck` is the thing a stranger installs.
+
+## AB-DEC 005 — Renamed `abstain` → `spancheck` (2026-09-26)
+**Status:** Decided. Supersedes AB-DEC 001. Done while the project is still a fresh scaffold — the cheapest moment to
+rename, before a release fixes the name in an install base.
+
+- `spancheck` is available on PyPI (`https://pypi.org/pypi/spancheck/json` → 404), verified again at rename time.
+- **Why the switch:**
+  1. **It foregrounds the one genuinely-new capability.** `abstain` named *abstention correctness*, which is one of
+     four metrics and — per AB-DEC 002 — the *least* novel (it already exists in `evallab`). `spancheck` names
+     **citation-span verification**, the single capability new to the whole workspace and the reason this build is more
+     than repackaging (the piece built first and tested deepest).
+  2. **Unique and searchable.** `abstain` is a common English word — poor to search for, easy to confuse. `spancheck`
+     reads like a tool name (cf. "spellcheck"), is distinctive, and collides with nothing.
+- **Scope of the rename:** package + import name (`spancheck`), the repo (`tjromack/spancheck`), the CLI/Action slug,
+  every doc, and the workspace registration (`.gitignore` + `bootstrap.ps1`). AB-DEC 001 is preserved above as the
+  original record; the incidental project-name references in AB-DEC 003–004 were updated to `spancheck` for
+  consistency (their *decisions* are unchanged).
 
 ---
-*Next entry = AB-DEC 005 (the citation-span verification design, once the API is sketched).*
+*Next entry = AB-DEC 006 (the citation-span verification design, once the API is sketched).*

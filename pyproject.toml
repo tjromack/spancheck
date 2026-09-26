@@ -3,7 +3,7 @@ requires = ["setuptools>=68"]
 build-backend = "setuptools.build_meta"
 
 [project]
-name = "abstain"
+name = "spancheck"
 version = "0.0.1"
 description = "Score a grounded-answer system on citation accuracy, abstention correctness, hallucination rate, cost and latency — with an audit log a compliance reviewer can read."
 readme = "README.md"
@@ -25,11 +25,11 @@ dependencies = []
 dev = ["pytest>=8"]
 
 [project.urls]
-Homepage = "https://github.com/tjromack/abstain"
-Source = "https://github.com/tjromack/abstain"
+Homepage = "https://github.com/tjromack/spancheck"
+Source = "https://github.com/tjromack/spancheck"
 
 [project.scripts]
-abstain = "abstain.cli:main"
+spancheck = "spancheck.cli:main"
 
 [tool.setuptools.packages.find]
 where = ["src"]
