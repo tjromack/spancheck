@@ -31,7 +31,11 @@ from .judge import judge_entailment, judge_support, llm_judge, load_prompt
 from .calibrate import calibrate_judge
 from . import graders
 
-__version__ = "0.0.1"
+try:  # single source of truth: the version declared in pyproject, read from installed metadata
+    from importlib.metadata import version as _pkg_version, PackageNotFoundError
+    __version__ = _pkg_version("spancheck")
+except PackageNotFoundError:  # running from a source tree that isn't installed
+    __version__ = "0.0.0+dev"
 
 __all__ = [
     # the declared public surface
