@@ -75,16 +75,16 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
       against the demo on every push)
 - [x] 66 tests pass; console script verified in a clean non-editable install. **← stop for approval before Phase 6**
 
-## Phase 6 — dogfood + case study + the harness copy pass
-- [ ] **dogfood = option A** (Trevor 2026-09-27): score a real grounded system over real material, low/no cost.
-      Source doc(s) + capture method TBC with Trevor; produce a real scorecard + audit log (`spancheck run … --out`)
-- [ ] `docs/CASE-STUDY.md` — framed as the evolution of the harness (AB-DEC 003), with the measured numbers
-- [ ] optional keyed **judge calibration** for the real agreement number (`python -m spancheck.calibrate --real`)
-- [ ] the harness copy pass (API is stable). **Per Trevor 2026-09-27:** move "points at any LLM via a thin adapter" to
-      spancheck (done here) and re-describe the harness as "the version that proved the method against one real target";
-      **remove the "capstone" claim ENTIRELY from the harness — do NOT bring it to spancheck** (9 files: README, CLAUDE,
-      DECISIONS, DEMO, MASTERY, PORTFOLIO_README, docs/CASE-STUDY)
-- [ ] README `Status` updated with real numbers; **stop for approval**
+## Phase 6 — dogfood + case study + the harness copy pass ✅ (spancheck side; 2026-09-27)
+- [x] **dogfood = option A + B1**: scored Suver's real `answer_question` pipeline (claude-sonnet-5) over its own sample
+      MSA, as a black box → real scorecard + `dogfood/suver_audit.json`. **Overall 0.967; citation accuracy 1.00; 0
+      hallucinations; caught 1 real false-abstention.** (`dogfood/run_dogfood.py`, `dogfood/suver_cases.jsonl`)
+- [x] `docs/CASE-STUDY.md` — framed as the evolution of the harness (AB-DEC 003), with the measured numbers
+- [x] keyed **judge calibration**: stub 0.75 → **claude-sonnet-5 1.00 (12/12)** (`calibration/RESULTS.md`)
+- [x] README `Status` + `Results` updated with the real numbers
+- [~] the harness copy pass (edits staged; **awaiting Trevor's ok on wording before pushing the harness repo**):
+      move "points at any LLM via a thin adapter" to spancheck (done here) + re-describe the harness as "the version that
+      proved the method against one real target"; **remove the "capstone" claim ENTIRELY** (9 files)
 
 ## Later / maybe
 - [ ] publish to PyPI (`spancheck`) — a release gate, after the audit-log schema is stable (v1.0.0)

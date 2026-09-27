@@ -13,6 +13,12 @@ import os
 def anthropic_provider(model: str = "claude-sonnet-5", api_key: str | None = None, max_tokens: int = 512):
     """An optional provider backed by the Anthropic SDK. Imported lazily — calling this needs `anthropic` installed
     and an API key (arg or ANTHROPIC_API_KEY). Used for the keyed judge-calibration run; never imported otherwise."""
+    try:  # use the OS trust store if available (some networks run a TLS-inspecting proxy). Optional, like anthropic.
+        import truststore
+        truststore.inject_into_ssl()
+    except Exception:
+        pass
+
     def call(prompt: str) -> str:
         import anthropic  # lazy: no hard dependency, no import cost unless a real judge is used
         client = anthropic.Anthropic(api_key=api_key or os.environ.get("ANTHROPIC_API_KEY"))

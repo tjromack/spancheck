@@ -27,21 +27,35 @@ wrappers over it.
 
 ## Status
 
-**Phases 1–5 shipped.** The measurement core (`Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`), the thin
+**Complete and dogfooded.** The measurement core (`Case` / `evaluate` / `Run` / `Scorecard` / `diff` / `gate`), the thin
 `adapter` contract, the deterministic graders, **citation-span verification** — the capability this build exists to
 add — the **cost/latency + versioned audit log** layer, the **calibrated LLM-judge**, and the **CLI + GitHub Action**
 are implemented, dependency-free (the judge reaches a model only through a caller-supplied callable), and tested
-(66 tests, verified from a clean `pip install`). Citation verification splits into **provenance** (is the cited span
-really in the retrieved context, verbatim?) and **support** (does the span cover the claim?); both must hold, so a
-fabricated quote or a right-answer-wrong-citation cannot pass. A captured run re-scores **offline** (`Run.rescore`),
-and `run.audit_log()` emits a versioned, self-describing record with per-citation verdicts (schema in
-[`docs/AUDIT-LOG.md`](docs/AUDIT-LOG.md)). The LLM-judge is **opt-in** — the default grader set stays fully
-deterministic and offline — and is **calibrated before it is trusted**: `python -m spancheck.calibrate` measures
-judge-vs-human agreement on a gold set rather than asserting a number. Still to come per `TODO.md`: an end-to-end
-**dogfood** against a real target + the case study (Phase 6).
+(68 tests, green on a clean `pip install` and in CI). Citation verification splits into **provenance** (is the cited
+span really in the retrieved context, verbatim?) and **support** (does the span cover the claim?); both must hold, so a
+fabricated quote or a right-answer-wrong-citation cannot pass. A captured run re-scores **offline** (`Run.rescore`), and
+`run.audit_log()` emits a versioned, self-describing record with per-citation verdicts (schema in
+[`docs/AUDIT-LOG.md`](docs/AUDIT-LOG.md)). The LLM-judge is **opt-in** — the default grader set stays deterministic and
+offline — and is **calibrated before it is trusted**.
 
-No end-to-end benchmark numbers appear here yet: they arrive with the Phase-6 dogfood. Until measured, any figure would
-be invented, and this project does not ship invented numbers (see `CLAUDE.md`).
+## Results (measured)
+
+`spancheck` was run end-to-end against a real product pipeline as a black box (a grounded answer-a-document tool on
+`claude-sonnet-5`, over its own sample contract), and the judge was calibrated against a human-labelled gold set. Full
+write-up in [`docs/CASE-STUDY.md`](docs/CASE-STUDY.md); the audit log is committed at
+[`dogfood/suver_audit.json`](dogfood/suver_audit.json).
+
+| Metric | Result |
+|---|---|
+| Citation accuracy (real pipeline) | **1.00** — every cited span real and supporting |
+| Hallucination (groundedness) | **0 hallucinations** (pass-rate 1.00) |
+| Abstention correctness | 11/12 — spancheck **caught one false-abstention** on the real system |
+| Overall (12 cases) | **0.967** |
+| Judge vs human gold set — stub / `claude-sonnet-5` | **0.75 / 1.00** |
+| Tests | **68**, clean `pip install` + CI (3.11 & 3.12) |
+
+The one miss is the point: the eval found a real recall gap in a shipping system — a measured behaviour, not a spancheck
+bug. Reproduce with `python dogfood/run_dogfood.py` and `python -m spancheck.calibrate --real`.
 
 ## Command line & CI
 

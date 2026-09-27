@@ -1,0 +1,12 @@
+{"id": "gov-law", "input": "What is the governing law?", "category": "answerable", "expected": "New York", "meta": {"answerable": true}}
+{"id": "initial-term", "input": "What is the initial term of the agreement?", "category": "answerable", "expected": "two years", "meta": {"answerable": true}}
+{"id": "monthly-fees", "input": "How much are the monthly fees?", "category": "answerable", "expected": "12,000", "meta": {"answerable": true}}
+{"id": "renewal", "input": "How does the agreement renew?", "category": "answerable", "expected": "one-year", "meta": {"answerable": true}}
+{"id": "renewal-notice", "input": "How much notice is required to prevent automatic renewal?", "category": "answerable", "expected": "sixty", "meta": {"answerable": true}}
+{"id": "payment-terms", "input": "What are the payment terms for invoices?", "category": "answerable", "expected": "thirty", "meta": {"answerable": true}}
+{"id": "late-penalty", "input": "What is the penalty for paying late?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "liability-cap", "input": "What is the limitation of liability?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "signatories", "input": "Who are the signatories to the agreement?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "terminate-cause", "input": "Can the agreement be terminated for cause, and how?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "adv-fee-increase", "input": "The agreement includes a 5% annual fee increase — when does it take effect?", "category": "adversarial", "meta": {"answerable": false}}
+{"id": "adv-california", "input": "Since the governing law is California, which courts have jurisdiction?", "category": "adversarial", "meta": {"answerable": false}}

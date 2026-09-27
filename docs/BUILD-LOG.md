@@ -216,7 +216,37 @@ Raw material for the case study and any later writing — kept honest and specif
 - Recorded the copy-pass refinement in `DECISIONS.md` (AB-DEC 003) and `TODO.md` (Phase 6).
 - Outlined the remaining manual steps for Trevor (key placement + dogfood-source confirmation + spend authorisation).
 
+### Phase 6 — ran this session (dogfood + case study + real judge number)
+- Trevor confirmed: dogfood **option A** (Suver's own sample corpus) + **B1** (run Suver's real pipeline), key in `.env`,
+  small spend authorised.
+- Mapped Suver's `AnswerResult` → spancheck `Output` (`Claim.span_text` → citation span, `Claim.text` → claim, the MSA →
+  the single context). Built `dogfood/{suver_cases.jsonl, run_dogfood.py}` and ran Suver's real `answer_question` on
+  **claude-sonnet-5** over its sample MSA, as a black box (spancheck never imports Suver internals for grading).
+- **Result: overall 0.967; citation accuracy 1.00; groundedness 1.00 (0 hallucinations); no_pii 1.00; abstention 11/12;
+  recall 11/12.** The single miss is real and valuable: Suver **false-abstained** on a paraphrased answerable question
+  (`renewal-notice`) — a genuine recall gap in a shipping system, surfaced by the eval. Audit log committed at
+  `dogfood/suver_audit.json`.
+- **Judge calibration (keyed): stub 0.75 → claude-sonnet-5 1.00 (12/12)** — the real model closed exactly the three
+  paraphrase/morphology cases the stub missed. Recorded in `calibration/RESULTS.md`.
+- Wrote `docs/CASE-STUDY.md` (framed as the harness's evolution) and updated README `Status` + a `Results` table.
+
+### Learnings (Phase 6)
+- **Two bugs the run caught, both instructive.** (1) My capture script built a grader list but forgot to pass it to
+  `evaluate`, so recall wasn't measured — fixed, and I added the recall grader by **re-scoring the captured run
+  offline** (`Run.rescore`), no extra model spend: the Phase-3 "capture once, re-score offline" pin paying off in
+  practice. (2) The direct judge call failed with a TLS `APIConnectionError` behind a TLS-inspecting proxy while the
+  Suver path succeeded — because Suver injects `truststore`. Added an optional `truststore.inject_into_ssl()` to
+  `anthropic_provider` (guarded, like the anthropic import), and calibration then ran clean.
+- **The dogfood earned its keep by finding a real miss.** A green 12/12 would have been less useful than 0.967 with one
+  concrete, reproducible false-abstention — that is the difference between a demo and an evaluation.
+- **Verify the provider, don't assume it.** Suver silently degrades to a stub on any model error; I confirmed
+  `provider=anthropic` and model-written answers in the audit log before trusting the numbers.
+
+### Manual / [Trevor]
+- **Harness copy pass — staged, awaiting your ok before I push the second public repo** (as promised): remove "capstone"
+  entirely, move the "any LLM / thin adapter" claim to spancheck, reframe the harness as "the version that proved the
+  method against one real target." Wording shown in the session for approval.
+
 ### Open / next
-- Awaiting Trevor: (1) drop the key in `.env`; (2) confirm the dogfood source document + capture method + authorise the
-  small keyed spend; then Phase 6 runs (dogfood → real scorecard/audit log → case study → harness copy pass). The
-  optional real judge-calibration number folds in at the same time.
+- spancheck side of Phase 6 is done and pushed. Remaining: push the harness copy-pass on Trevor's ok. Then the build is
+  complete; a résumé line is warranted (real numbers now exist) — see [[keep-resume-updates-current]].

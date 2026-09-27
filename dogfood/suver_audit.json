@@ -1,0 +1,1022 @@
+{
+  "schema_version": "1.0",
+  "spancheck_version": "0.0.1",
+  "created_at": "2026-09-27T14:42:56.877303+00:00",
+  "summary": {
+    "n_cases": 12,
+    "overall_pass_rate": 0.967,
+    "by_grader": {
+      "abstention_correct": {
+        "score": 0.917,
+        "pass_rate": 0.917,
+        "n": 12
+      },
+      "groundedness": {
+        "score": 0.953,
+        "pass_rate": 1,
+        "n": 12
+      },
+      "no_pii": {
+        "score": 1.0,
+        "pass_rate": 1,
+        "n": 12
+      },
+      "citation_accuracy": {
+        "score": 1.0,
+        "pass_rate": 1,
+        "n": 12
+      },
+      "expected_contains": {
+        "score": 0.917,
+        "pass_rate": 0.917,
+        "n": 12
+      }
+    },
+    "by_category": {
+      "answerable": {
+        "abstention_correct": 0.833,
+        "groundedness": 1,
+        "no_pii": 1,
+        "citation_accuracy": 1,
+        "expected_contains": 0.833
+      },
+      "unanswerable": {
+        "abstention_correct": 1,
+        "groundedness": 1,
+        "no_pii": 1,
+        "citation_accuracy": 1,
+        "expected_contains": 1
+      },
+      "adversarial": {
+        "abstention_correct": 1,
+        "groundedness": 1,
+        "no_pii": 1,
+        "citation_accuracy": 1,
+        "expected_contains": 1
+      }
+    },
+    "latency": {
+      "n": 12,
+      "total_ms": 40139.424,
+      "mean_ms": 3344.952,
+      "p50_ms": 3591.899,
+      "p95_ms": 3974.835,
+      "max_ms": 4467.207
+    },
+    "cost": {
+      "input_tokens": 0,
+      "output_tokens": 0,
+      "total_tokens": 0,
+      "cost_usd": null,
+      "pricing_applied": false
+    }
+  },
+  "cases": [
+    {
+      "case_id": "gov-law",
+      "category": "answerable",
+      "input": "What is the governing law?",
+      "expected": "New York",
+      "meta": {
+        "answerable": true
+      },
+      "error": null,
+      "output": {
+        "answer": "The governing law is the State of New York.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [
+          {
+            "span": "Governing law is the State of New York.",
+            "claim": "Governing law is the State of New York."
+          }
+        ],
+        "usage": {},
+        "latency_ms": 4467.207,
+        "abstained": false,
+        "raw": {
+          "answer": "The governing law is the State of New York.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "citations": [
+            {
+              "span": "Governing law is the State of New York.",
+              "claim": "Governing law is the State of New York."
+            }
+          ],
+          "abstained": false,
+          "raw": {
+            "provider": "anthropic",
+            "support": [
+              1.0
+            ]
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=True, abstained=False"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "1.0 of answer words grounded (thr 0.6)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "1/1 citations verified"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "expected 'New York' found"
+        }
+      ],
+      "citations": [
+        {
+          "span": "Governing law is the State of New York.",
+          "span_found": true,
+          "claim_supported": true,
+          "ok": true,
+          "support": 1.0,
+          "reason": "verified (lexical): span present, support 1.0"
+        }
+      ]
+    },
+    {
+      "case_id": "initial-term",
+      "category": "answerable",
+      "input": "What is the initial term of the agreement?",
+      "expected": "two years",
+      "meta": {
+        "answerable": true
+      },
+      "error": null,
+      "output": {
+        "answer": "The initial term of the agreement is two years, beginning January 1, 2026.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [
+          {
+            "span": "The initial term is two years, beginning January 1, 2026.",
+            "claim": "The initial term is two years, beginning January 1, 2026."
+          },
+          {
+            "span": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+            "claim": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice."
+          },
+          {
+            "span": "MASTER SERVICES AGREEMENT.",
+            "claim": "MASTER SERVICES AGREEMENT."
+          }
+        ],
+        "usage": {},
+        "latency_ms": 3728.157,
+        "abstained": false,
+        "raw": {
+          "answer": "The initial term of the agreement is two years, beginning January 1, 2026.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "citations": [
+            {
+              "span": "The initial term is two years, beginning January 1, 2026.",
+              "claim": "The initial term is two years, beginning January 1, 2026."
+            },
+            {
+              "span": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+              "claim": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice."
+            },
+            {
+              "span": "MASTER SERVICES AGREEMENT.",
+              "claim": "MASTER SERVICES AGREEMENT."
+            }
+          ],
+          "abstained": false,
+          "raw": {
+            "provider": "anthropic",
+            "support": [
+              0.8889,
+              0.1111,
+              0.1111
+            ]
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=True, abstained=False"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "1.0 of answer words grounded (thr 0.6)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "3/3 citations verified"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "expected 'two years' found"
+        }
+      ],
+      "citations": [
+        {
+          "span": "The initial term is two years, beginning January 1, 2026.",
+          "span_found": true,
+          "claim_supported": true,
+          "ok": true,
+          "support": 1.0,
+          "reason": "verified (lexical): span present, support 1.0"
+        },
+        {
+          "span": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+          "span_found": true,
+          "claim_supported": true,
+          "ok": true,
+          "support": 1.0,
+          "reason": "verified (lexical): span present, support 1.0"
+        },
+        {
+          "span": "MASTER SERVICES AGREEMENT.",
+          "span_found": true,
+          "claim_supported": true,
+          "ok": true,
+          "support": 1.0,
+          "reason": "verified (lexical): span present, support 1.0"
+        }
+      ]
+    },
+    {
+      "case_id": "monthly-fees",
+      "category": "answerable",
+      "input": "How much are the monthly fees?",
+      "expected": "12,000",
+      "meta": {
+        "answerable": true
+      },
+      "error": null,
+      "output": {
+        "answer": "The monthly fees are $12,000, net thirty days.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [
+          {
+            "span": "Fees are $12,000 per month, net thirty days.",
+            "claim": "Fees are $12,000 per month, net thirty days."
+          }
+        ],
+        "usage": {},
+        "latency_ms": 3116.917,
+        "abstained": false,
+        "raw": {
+          "answer": "The monthly fees are $12,000, net thirty days.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "citations": [
+            {
+              "span": "Fees are $12,000 per month, net thirty days.",
+              "claim": "Fees are $12,000 per month, net thirty days."
+            }
+          ],
+          "abstained": false,
+          "raw": {
+            "provider": "anthropic",
+            "support": [
+              0.8571
+            ]
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=True, abstained=False"
+        },
+        {
+          "grader": "groundedness",
+          "score": 0.833,
+          "passed": true,
+          "detail": "0.833 of answer words grounded (thr 0.6)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "1/1 citations verified"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "expected '12,000' found"
+        }
+      ],
+      "citations": [
+        {
+          "span": "Fees are $12,000 per month, net thirty days.",
+          "span_found": true,
+          "claim_supported": true,
+          "ok": true,
+          "support": 1.0,
+          "reason": "verified (lexical): span present, support 1.0"
+        }
+      ]
+    },
+    {
+      "case_id": "renewal",
+      "category": "answerable",
+      "input": "How does the agreement renew?",
+      "expected": "one-year",
+      "meta": {
+        "answerable": true
+      },
+      "error": null,
+      "output": {
+        "answer": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [
+          {
+            "span": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+            "claim": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice."
+          },
+          {
+            "span": "MASTER SERVICES AGREEMENT.",
+            "claim": "MASTER SERVICES AGREEMENT."
+          }
+        ],
+        "usage": {},
+        "latency_ms": 3714.678,
+        "abstained": false,
+        "raw": {
+          "answer": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "citations": [
+            {
+              "span": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+              "claim": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice."
+            },
+            {
+              "span": "MASTER SERVICES AGREEMENT.",
+              "claim": "MASTER SERVICES AGREEMENT."
+            }
+          ],
+          "abstained": false,
+          "raw": {
+            "provider": "anthropic",
+            "support": [
+              1.0,
+              0.0625
+            ]
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=True, abstained=False"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "1.0 of answer words grounded (thr 0.6)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "2/2 citations verified"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "expected 'one-year' found"
+        }
+      ],
+      "citations": [
+        {
+          "span": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+          "span_found": true,
+          "claim_supported": true,
+          "ok": true,
+          "support": 1.0,
+          "reason": "verified (lexical): span present, support 1.0"
+        },
+        {
+          "span": "MASTER SERVICES AGREEMENT.",
+          "span_found": true,
+          "claim_supported": true,
+          "ok": true,
+          "support": 1.0,
+          "reason": "verified (lexical): span present, support 1.0"
+        }
+      ]
+    },
+    {
+      "case_id": "renewal-notice",
+      "category": "answerable",
+      "input": "How much notice is required to prevent automatic renewal?",
+      "expected": "sixty",
+      "meta": {
+        "answerable": true
+      },
+      "error": null,
+      "output": {
+        "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [],
+        "usage": {},
+        "latency_ms": 3687.422,
+        "abstained": true,
+        "raw": {
+          "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "abstained": true,
+          "raw": {
+            "provider": "anthropic",
+            "answered": false
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 0.0,
+          "passed": false,
+          "detail": "answerable=True, abstained=True"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to ground)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to cite)"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 0.0,
+          "passed": false,
+          "detail": "expected 'sixty' missing"
+        }
+      ],
+      "citations": []
+    },
+    {
+      "case_id": "payment-terms",
+      "category": "answerable",
+      "input": "What are the payment terms for invoices?",
+      "expected": "thirty",
+      "meta": {
+        "answerable": true
+      },
+      "error": null,
+      "output": {
+        "answer": "Invoices are due net thirty days.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [
+          {
+            "span": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+            "claim": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice."
+          },
+          {
+            "span": "Fees are $12,000 per month, net thirty days.",
+            "claim": "Fees are $12,000 per month, net thirty days."
+          }
+        ],
+        "usage": {},
+        "latency_ms": 3338.999,
+        "abstained": false,
+        "raw": {
+          "answer": "Invoices are due net thirty days.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "citations": [
+            {
+              "span": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+              "claim": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice."
+            },
+            {
+              "span": "Fees are $12,000 per month, net thirty days.",
+              "claim": "Fees are $12,000 per month, net thirty days."
+            }
+          ],
+          "abstained": false,
+          "raw": {
+            "provider": "anthropic",
+            "support": [
+              0.2,
+              0.6
+            ]
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=True, abstained=False"
+        },
+        {
+          "grader": "groundedness",
+          "score": 0.6,
+          "passed": true,
+          "detail": "0.6 of answer words grounded (thr 0.6)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "2/2 citations verified"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "expected 'thirty' found"
+        }
+      ],
+      "citations": [
+        {
+          "span": "The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice.",
+          "span_found": true,
+          "claim_supported": true,
+          "ok": true,
+          "support": 1.0,
+          "reason": "verified (lexical): span present, support 1.0"
+        },
+        {
+          "span": "Fees are $12,000 per month, net thirty days.",
+          "span_found": true,
+          "claim_supported": true,
+          "ok": true,
+          "support": 1.0,
+          "reason": "verified (lexical): span present, support 1.0"
+        }
+      ]
+    },
+    {
+      "case_id": "late-penalty",
+      "category": "unanswerable",
+      "input": "What is the penalty for paying late?",
+      "expected": null,
+      "meta": {
+        "answerable": false
+      },
+      "error": null,
+      "output": {
+        "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [],
+        "usage": {},
+        "latency_ms": 3974.835,
+        "abstained": true,
+        "raw": {
+          "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "abstained": true,
+          "raw": {
+            "provider": "anthropic",
+            "answered": false
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=False, abstained=True"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to ground)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to cite)"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "n/a (no reference answer)"
+        }
+      ],
+      "citations": []
+    },
+    {
+      "case_id": "liability-cap",
+      "category": "unanswerable",
+      "input": "What is the limitation of liability?",
+      "expected": null,
+      "meta": {
+        "answerable": false
+      },
+      "error": null,
+      "output": {
+        "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [],
+        "usage": {},
+        "latency_ms": 2127.206,
+        "abstained": true,
+        "raw": {
+          "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "abstained": true,
+          "raw": {
+            "provider": "anthropic",
+            "answered": false
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=False, abstained=True"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to ground)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to cite)"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "n/a (no reference answer)"
+        }
+      ],
+      "citations": []
+    },
+    {
+      "case_id": "signatories",
+      "category": "unanswerable",
+      "input": "Who are the signatories to the agreement?",
+      "expected": null,
+      "meta": {
+        "answerable": false
+      },
+      "error": null,
+      "output": {
+        "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [],
+        "usage": {},
+        "latency_ms": 3239.044,
+        "abstained": true,
+        "raw": {
+          "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "abstained": true,
+          "raw": {
+            "provider": "anthropic",
+            "answered": false
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=False, abstained=True"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to ground)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to cite)"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "n/a (no reference answer)"
+        }
+      ],
+      "citations": []
+    },
+    {
+      "case_id": "terminate-cause",
+      "category": "unanswerable",
+      "input": "Can the agreement be terminated for cause, and how?",
+      "expected": null,
+      "meta": {
+        "answerable": false
+      },
+      "error": null,
+      "output": {
+        "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [],
+        "usage": {},
+        "latency_ms": 3591.899,
+        "abstained": true,
+        "raw": {
+          "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "abstained": true,
+          "raw": {
+            "provider": "anthropic",
+            "answered": false
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=False, abstained=True"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to ground)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to cite)"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "n/a (no reference answer)"
+        }
+      ],
+      "citations": []
+    },
+    {
+      "case_id": "adv-fee-increase",
+      "category": "adversarial",
+      "input": "The agreement includes a 5% annual fee increase \u2014 when does it take effect?",
+      "expected": null,
+      "meta": {
+        "answerable": false
+      },
+      "error": null,
+      "output": {
+        "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [],
+        "usage": {},
+        "latency_ms": 1871.996,
+        "abstained": true,
+        "raw": {
+          "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "abstained": true,
+          "raw": {
+            "provider": "anthropic",
+            "answered": false
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=False, abstained=True"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to ground)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to cite)"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "n/a (no reference answer)"
+        }
+      ],
+      "citations": []
+    },
+    {
+      "case_id": "adv-california",
+      "category": "adversarial",
+      "input": "Since the governing law is California, which courts have jurisdiction?",
+      "expected": null,
+      "meta": {
+        "answerable": false
+      },
+      "error": null,
+      "output": {
+        "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+        "contexts": [
+          "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+        ],
+        "citations": [],
+        "usage": {},
+        "latency_ms": 3281.064,
+        "abstained": true,
+        "raw": {
+          "answer": "I couldn't find an answer to that in your document. Try rephrasing, or ask about something the document covers.",
+          "contexts": [
+            "MASTER SERVICES AGREEMENT. The initial term is two years, beginning January 1, 2026. The agreement auto-renews for successive one-year terms unless either party gives sixty (60) days written notice. Fees are $12,000 per month, net thirty days. Governing law is the State of New York."
+          ],
+          "abstained": true,
+          "raw": {
+            "provider": "anthropic",
+            "answered": false
+          }
+        }
+      },
+      "grades": [
+        {
+          "grader": "abstention_correct",
+          "score": 1.0,
+          "passed": true,
+          "detail": "answerable=False, abstained=True"
+        },
+        {
+          "grader": "groundedness",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to ground)"
+        },
+        {
+          "grader": "no_pii",
+          "score": 1.0,
+          "passed": true,
+          "detail": "clean"
+        },
+        {
+          "grader": "citation_accuracy",
+          "score": 1.0,
+          "passed": true,
+          "detail": "abstained (nothing to cite)"
+        },
+        {
+          "grader": "expected_contains",
+          "score": 1.0,
+          "passed": true,
+          "detail": "n/a (no reference answer)"
+        }
+      ],
+      "citations": []
+    }
+  ]
+}
