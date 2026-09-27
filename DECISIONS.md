@@ -230,5 +230,22 @@ carries the load; the judge is the upgrade, calibrated before it is trusted.
 (violates pin #2); trusting the judge without calibration (the whole point is the measured agreement number); judging
 provenance (a factual, checkable property must never drift).
 
+## AB-DEC 010 — MIT license + publish to PyPI (2026-09-27)
+**Status:** Decided (Trevor). Done.
+
+spancheck launched public as **source-available** like the rest of the portfolio, but that licence forbids *use* — which
+contradicts the whole point of a `pip`-installable library (a reviewer who installs it isn't allowed to run it).
+
+**Decision:** relicense **spancheck** as **MIT** and publish it to PyPI (`pip install spancheck`). The product (Suver)
+and the applied-AI engines stay **source-available** — a deliberate product-vs-tooling split: the product is protected,
+the reusable dev tool is open. This maximises the portfolio signal (a real, installable, usable package) and removes the
+licence/`pip` contradiction.
+
+- `pyproject` uses the SPDX form (`license = "MIT"` + `license-files`); version is read from installed metadata so it
+  can't drift. First good release: **0.1.1** (0.1.0 shipped a stale `--version`; superseded).
+- Live at https://pypi.org/project/spancheck/ . Release procedure in `RELEASING.md`.
+- **Rejected:** keeping source-available and skipping PyPI (loses the `pip install` signal, though it stays consistent
+  with the product); reserving the name under a no-use licence (keeps the contradiction).
+
 ---
-*Next entry = AB-DEC 010.*
+*Next entry = AB-DEC 011.*

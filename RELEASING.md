@@ -28,4 +28,8 @@ spancheck is MIT-licensed and published as `spancheck`. Releases are cut from `m
 - The wheel bundles the judge prompt (`prompts/*.txt`) via `[tool.setuptools.package-data]`; `twine check` and a
   fresh-venv `spancheck.load_prompt("entailment_v1")` confirm it ships.
 - No secrets or `.env` are packaged (`.gitignore` + the `src/` layout keep them out).
-- First release: **0.1.0**.
+- Current release: **0.1.1** (live at https://pypi.org/project/spancheck/). 0.1.0 shipped a stale `--version` and is
+  superseded — `__version__` now reads from installed metadata so it can't drift from `pyproject` again.
+- This network runs a TLS-inspecting proxy, so `twine` needs the OS trust store: run the upload through a launcher that
+  calls `truststore.inject_into_ssl()` first (see the session's `twine_upload.py`), or set a CA bundle
+  (`REQUESTS_CA_BUNDLE`). Plain `twine upload` fails cert verification here.

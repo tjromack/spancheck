@@ -86,12 +86,15 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
       version that proved the method against one real target", spancheck linked as the generalised version
 
 ## Later / maybe
-- [ ] publish to PyPI (`spancheck`) — a release gate, after the audit-log schema is stable (v1.0.0)
+- [x] **MIT license + publish to PyPI** (AB-DEC 010) — LIVE: `pip install spancheck`,
+      https://pypi.org/project/spancheck/ (v0.1.1, tag v0.1.1)
 - [ ] more adapters (a second real target beyond Suver)
+- [ ] source-scoped citation provenance; broader / multi-document dogfood corpus
+- [ ] optional hygiene: yank 0.1.0 on PyPI (stale `--version`; 0.1.1 is latest)
 
 ---
 
 ### GitHub remote (Phase 0) — DONE
-Created public + source-available, matching the siblings, and the scaffold is pushed:
+Created public (source-available at Phase 0; **relicensed MIT** at launch — AB-DEC 010) and the scaffold is pushed:
 **https://github.com/tjromack/spancheck** (topics: rag, llm-evaluation, hallucination-detection,
 citation-verification, guardrails, python).

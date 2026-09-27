@@ -256,14 +256,31 @@ Raw material for the case study and any later writing — kept honest and specif
 - All six phases shipped; spancheck is a complete, dogfooded, CI-green, **MIT-licensed** library with real measured
   numbers (dogfood overall 0.967, citation accuracy 1.00, 0 hallucinations, 1 real finding; judge calibration 1.00).
 
-### Relicensed MIT + PyPI-ready (2026-09-27)
+### Relicensed MIT + PUBLISHED to PyPI (2026-09-27)
 - **Decision (Trevor):** spancheck is MIT-licensed and published to PyPI. Rationale: it's a reusable *tool meant to be
   run*, so a source-available "no-use" licence contradicted `pip install`. The product (Suver) and the applied-AI
-  engines stay source-available; spancheck is deliberately open as a library — a clean product/tooling split.
-- Swapped `LICENSE` to MIT; `pyproject` → `license = "MIT"` (+ license-files, SPDX form, setuptools>=77), version
-  **0.1.0**; updated every "source-available" reference (README banner + licence section, CLAUDE, case study) to MIT and
-  the install line to `pip install spancheck`. Added `RELEASING.md`. Wheel + sdist build clean.
-- **[Trevor] manual:** the `twine upload` needs your PyPI token — commands in `RELEASING.md` and handed over in-session.
-- **Next:** (a) site repo — add a spancheck card + case study, update the harness card (drop capstone, link spancheck);
-  (b) a RESUME-UPDATES line now that real numbers exist ([[keep-resume-updates-current]]); (c) optional forward work
-  on spancheck itself (PyPI release, a second real adapter, source-scoped citations, more corpora).
+  engines stay source-available; spancheck is deliberately open as a library — a clean product/tooling split (AB-DEC 010).
+- Swapped `LICENSE` to MIT; `pyproject` → `license = "MIT"` (SPDX + license-files, setuptools>=77); updated every
+  "source-available" reference (README banner + licence section, CLAUDE, case study) to MIT and the install line to
+  `pip install spancheck`. Added `RELEASING.md`.
+- **PUBLISHED: `pip install spancheck` → https://pypi.org/project/spancheck/ (v0.1.1, tag v0.1.1).** Verified on a clean
+  `--no-cache-dir` install: `spancheck --version` → 0.1.1 and a full `run`/`gate` cycle passes from the PyPI wheel.
+
+### Learnings (publish)
+- **The TLS-inspecting proxy bit twice more.** `twine` (via `requests`) failed cert verification exactly like the
+  earlier model call; ran the upload through a `truststore.inject_into_ssl()` launcher and it went through. Same root
+  cause as the provider fix — worth remembering this network needs the OS trust store for *any* outbound TLS.
+- **Ship the version from metadata, not a string.** 0.1.0 published with a stale hardcoded `__version__` ("0.0.1")
+  because the code string wasn't synced with `pyproject`. Fixed by reading `__version__` from `importlib.metadata`
+  (single source of truth) and re-releasing as 0.1.1. A version is publish-once, so the lesson is cheap here but would
+  be expensive later: never hardcode a version in two places.
+- **Windows saved `.pypirc` as `.pypirc.txt`.** Notepad appends `.txt`; twine looks for the exact name. Renamed it
+  (contents never read/printed) and the token stayed out of the transcript.
+- Optional hygiene left to Trevor: yank 0.1.0 on the PyPI web UI (0.1.1 is latest, so `pip install spancheck` already
+  gets the good one).
+
+### Next (open, all additive / Trevor)
+- (a) Site repo — add the spancheck card + case study (body ready at `docs/CASE-STUDY.md`); the card CTA is now a real
+  `pip install spancheck`. Copy/paste brief handed over in-session. (b) A RESUME-UPDATES line now that real numbers +
+  a live package exist ([[keep-resume-updates-current]]). (c) Optional forward work: a second real adapter,
+  source-scoped citations, broader corpora — better as interview talking points than proactive build.
