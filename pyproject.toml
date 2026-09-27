@@ -1,19 +1,21 @@
 [build-system]
-requires = ["setuptools>=68"]
+requires = ["setuptools>=77"]
 build-backend = "setuptools.build_meta"
 
 [project]
 name = "spancheck"
-version = "0.0.1"
+version = "0.1.0"
 description = "Score a grounded-answer system on citation accuracy, abstention correctness, hallucination rate, cost and latency — with an audit log a compliance reviewer can read."
 readme = "README.md"
 requires-python = ">=3.11"
-license = { text = "LicenseRef-Source-Available" }
+license = "MIT"
+license-files = ["LICENSE"]
 authors = [{ name = "Trevor J. Romack", email = "tjromack@gmail.com" }]
 keywords = ["rag", "evaluation", "llm", "hallucination", "citation", "abstention", "guardrails"]
 classifiers = [
   "Programming Language :: Python :: 3",
   "Programming Language :: Python :: 3.11",
+  "Programming Language :: Python :: 3.12",
   "Operating System :: OS Independent",
   "Intended Audience :: Developers",
   "Topic :: Software Development :: Quality Assurance",

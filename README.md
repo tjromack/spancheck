@@ -1,7 +1,6 @@
 # spancheck
 
-> © 2026 Trevor J. Romack — **source-available for review, not open-source** ([LICENSE](LICENSE)). No reuse or
-> commercial use without permission. · tjromack@gmail.com
+> © 2026 Trevor J. Romack — **MIT-licensed** ([LICENSE](LICENSE)) · `pip install spancheck` · tjromack@gmail.com
 
 **Score a grounded-answer system on citation accuracy, abstention correctness, hallucination rate, cost and latency —
 and get an audit log a compliance reviewer can read.**
@@ -63,7 +62,7 @@ The CLI is a thin wrapper over the library. It works out of the box against a sh
 code:
 
 ```bash
-pip install -e .
+pip install spancheck          # or `pip install -e .` from a clone
 spancheck run examples/cases.jsonl --target spancheck.demo:system --out audit.json
 spancheck score audit.json                                    # recompute metrics from the cache, offline
 spancheck gate  audit.json citation_accuracy=1.0 groundedness=0.9   # exit 1 on failure (for CI)
@@ -155,5 +154,5 @@ spancheck score audit.json        # recompute metrics from a cached run, no netw
 
 ## License
 
-Source-available for evaluation only. See [LICENSE](LICENSE). Not open-source: no reuse, redistribution, deployment, or
-commercial use without written permission.
+**MIT** — see [LICENSE](LICENSE). Free to use, modify, and distribute; the library is a tool meant to be run against
+your own systems.

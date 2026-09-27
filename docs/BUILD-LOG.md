@@ -253,8 +253,17 @@ Raw material for the case study and any later writing — kept honest and specif
   linked spancheck as the generalised version. Trevor approved the wording first. The harness's own numbers untouched.
 
 ### Phase 6 complete — build is done
-- All six phases shipped; spancheck is a complete, dogfooded, CI-green, source-available library with real measured
+- All six phases shipped; spancheck is a complete, dogfooded, CI-green, **MIT-licensed** library with real measured
   numbers (dogfood overall 0.967, citation accuracy 1.00, 0 hallucinations, 1 real finding; judge calibration 1.00).
+
+### Relicensed MIT + PyPI-ready (2026-09-27)
+- **Decision (Trevor):** spancheck is MIT-licensed and published to PyPI. Rationale: it's a reusable *tool meant to be
+  run*, so a source-available "no-use" licence contradicted `pip install`. The product (Suver) and the applied-AI
+  engines stay source-available; spancheck is deliberately open as a library — a clean product/tooling split.
+- Swapped `LICENSE` to MIT; `pyproject` → `license = "MIT"` (+ license-files, SPDX form, setuptools>=77), version
+  **0.1.0**; updated every "source-available" reference (README banner + licence section, CLAUDE, case study) to MIT and
+  the install line to `pip install spancheck`. Added `RELEASING.md`. Wheel + sdist build clean.
+- **[Trevor] manual:** the `twine upload` needs your PyPI token — commands in `RELEASING.md` and handed over in-session.
 - **Next:** (a) site repo — add a spancheck card + case study, update the harness card (drop capstone, link spancheck);
   (b) a RESUME-UPDATES line now that real numbers exist ([[keep-resume-updates-current]]); (c) optional forward work
   on spancheck itself (PyPI release, a second real adapter, source-scoped citations, more corpora).

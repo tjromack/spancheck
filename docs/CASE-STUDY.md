@@ -111,4 +111,4 @@ it applies: deterministic where it can be, calibrated where it can't, and honest
 as the second chapter of a single story — a method proven against one system, then extracted into a tool anyone can run
 against their own.
 
-*Source-available for evaluation. Repository: https://github.com/tjromack/spancheck*
+*MIT-licensed. `pip install spancheck` · Repository: https://github.com/tjromack/spancheck*

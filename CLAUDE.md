@@ -47,7 +47,8 @@ at their own corpus. See `LINEAGE.md` for what carried over and what was rewritt
   trusted.
 - **No invented facts.** Any number, benchmark, or result not yet measured is `[TKTK]` until it is run for real.
   Illustrative numbers never ship as if measured.
-- **Source-available, not open-source** (LICENSE): view-for-evaluation; no reuse/deploy/commercial use.
+- **MIT-licensed** (LICENSE): a reusable tool meant to be run; free to use, modify, and distribute. (The product,
+  Suver, and the applied-AI engines stay source-available; spancheck is deliberately open as a library.)
 
 ## Stack
 
