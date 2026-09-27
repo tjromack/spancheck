@@ -82,9 +82,8 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
 - [x] `docs/CASE-STUDY.md` — framed as the evolution of the harness (AB-DEC 003), with the measured numbers
 - [x] keyed **judge calibration**: stub 0.75 → **claude-sonnet-5 1.00 (12/12)** (`calibration/RESULTS.md`)
 - [x] README `Status` + `Results` updated with the real numbers
-- [~] the harness copy pass (edits staged; **awaiting Trevor's ok on wording before pushing the harness repo**):
-      move "points at any LLM via a thin adapter" to spancheck (done here) + re-describe the harness as "the version that
-      proved the method against one real target"; **remove the "capstone" claim ENTIRELY** (9 files)
+- [x] the harness copy pass — **pushed** (harness `14981b2`): "capstone" removed entirely (8 files), reframed as "the
+      version that proved the method against one real target", spancheck linked as the generalised version
 
 ## Later / maybe
 - [ ] publish to PyPI (`spancheck`) — a release gate, after the audit-log schema is stable (v1.0.0)
