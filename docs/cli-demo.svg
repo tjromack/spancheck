@@ -1,0 +1,26 @@
+<svg xmlns="http://www.w3.org/2000/svg" width="760" height="372" viewBox="0 0 760 372" font-family="ui-monospace, SFMono-Regular, Menlo, Consolas, monospace" font-size="13">
+  <rect x="0.5" y="0.5" width="759" height="371" rx="10" fill="#0d1117" stroke="#30363d"/>
+  <circle cx="20" cy="18" r="6" fill="#ff5f56"/>
+  <circle cx="40" cy="18" r="6" fill="#ffbd2e"/>
+  <circle cx="60" cy="18" r="6" fill="#27c93f"/>
+  <text x="380" y="22" text-anchor="middle" fill="#8b949e">spancheck — try it (no API key needed)</text>
+  <line x1="0" y1="34" x2="760" y2="34" stroke="#30363d"/>
+  <g>
+    <text x="20" y="58"><tspan fill="#58a6ff">$ </tspan><tspan fill="#e6edf3">spancheck run examples/cases.jsonl --target spancheck.demo:system --out audit.json</tspan></text>
+    <text x="20" y="78" fill="#8b949e">wrote audit.json</text>
+    <text x="20" y="98" fill="#c9d1d9">cases: 3   overall pass rate: 1</text>
+    <text x="20" y="118" fill="#c9d1d9">  abstention_correct   pass_rate=<tspan fill="#3fb950">1</tspan>  score=1.0  n=3</text>
+    <text x="20" y="138" fill="#c9d1d9">  groundedness         pass_rate=<tspan fill="#3fb950">1</tspan>  score=1.0  n=3</text>
+    <text x="20" y="158" fill="#c9d1d9">  no_pii               pass_rate=<tspan fill="#3fb950">1</tspan>  score=1.0  n=3</text>
+    <text x="20" y="178" fill="#c9d1d9">  citation_accuracy    pass_rate=<tspan fill="#3fb950">1</tspan>  score=1.0  n=3</text>
+    <text x="20" y="198" fill="#8b949e">  latency: mean=5.667ms  p95=6.0ms   tokens=172  cost_usd=None</text>
+
+    <text x="20" y="228"><tspan fill="#58a6ff">$ </tspan><tspan fill="#e6edf3">spancheck gate audit.json citation_accuracy=1.0 groundedness=0.9</tspan></text>
+    <text x="20" y="248" fill="#3fb950">gate: PASS</text>
+
+    <text x="20" y="278"><tspan fill="#58a6ff">$ </tspan><tspan fill="#e6edf3">spancheck gate audit.json groundedness=1.01</tspan><tspan fill="#8b949e">   # a regression fails CI</tspan></text>
+    <text x="20" y="298" fill="#f85149">gate: FAIL</text>
+    <text x="20" y="318" fill="#c9d1d9">  - groundedness pass_rate 1 &lt; threshold 1.01</text>
+    <text x="20" y="338"><tspan fill="#58a6ff">$ </tspan><tspan fill="#e6edf3">echo $?</tspan><tspan fill="#c9d1d9">   →  </tspan><tspan fill="#f85149">1</tspan></text>
+  </g>
+</svg>

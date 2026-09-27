@@ -13,6 +13,19 @@ failed.
 Library first, CLI second, GitHub Action third: the Python API is the product; the command line and the Action are thin
 wrappers over it.
 
+![spancheck CLI: run a grounded-answer system against a test set, print a scorecard, then gate on the scores — a passing run, and a regression that fails CI with exit code 1](docs/cli-demo.svg)
+
+**Who it's for.** Teams shipping RAG or retrieval-then-answer systems — especially in regulated domains (healthcare,
+finance, legal) — who need citation accuracy and abstention *instrumented* rather than asserted, want a regression gate
+in CI, and need an audit trail a reviewer can read.
+
+**How it compares.** General LLM-eval frameworks exist and cover broad quality scoring well — Ragas, DeepEval, TruLens,
+promptfoo, Braintrust. `spancheck` is deliberately narrow: **citation-span verification** (is the cited span real, and
+does it actually support the claim?) and **abstention correctness** as first-class, deterministic metrics, with a
+versioned audit log built for regulated review. If you want a broad evaluation platform, reach for one of those; if the
+two things you can't afford to get wrong are a fabricated citation and a failure to say "I don't know," that is the gap
+this fills.
+
 ---
 
 ## The four metrics
@@ -142,6 +155,9 @@ spancheck score audit.json        # recompute metrics from a cached run, no netw
   citation to the specific `source_id` it names is a planned refinement.
 - **Groundedness is a word-overlap proxy too**, and the metrics are only as good as the test set you bring. `spancheck`
   measures a system against cases you author; it does not generate them.
+- **Not a general-purpose eval platform, and not a benchmark.** It scores the four trust metrics above on *your* corpus;
+  broad quality evaluation is what the frameworks in "How it compares" are for, and benchmark-grade methodology
+  (labeling rigour, inter-rater agreement, public leaderboard) is a separate effort.
 
 ## Design pins
 
