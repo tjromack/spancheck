@@ -279,8 +279,19 @@ Raw material for the case study and any later writing — kept honest and specif
 - Optional hygiene left to Trevor: yank 0.1.0 on the PyPI web UI (0.1.1 is latest, so `pip install spancheck` already
   gets the good one).
 
+### Rubric self-grade vs the Build Playbook §01 (2026-09-27)
+- Scored against the 8-gate rubric: **14/16 → Featured** (no zero anywhere; full marks on the two gates the playbook
+  says matter most — Gate 6 try-it via `pip install` + demo target, and Gate 4 verification evidence via the dogfood +
+  error analysis + judge calibration).
+- Two soft spots at 1: **Gate 2** (README lacked a visual, an explicit audience, and the packet's competitor-landscape
+  paragraph) and **Gate 7** (input real but a single tidy 12-case contract, not messy enough that handling it is the work).
+- **Gate 2 fixed this session → 15/16:** added `docs/cli-demo.svg` (a real run + gate render), a "Who it's for" line, a
+  "How it compares" paragraph (Ragas/DeepEval/TruLens/promptfoo/Braintrust + the narrow differentiator), and a
+  "not a general-purpose eval platform / not a benchmark" limit.
+- **Open → Gate 7:** a messier, multi-document dogfood corpus is the one remaining item to 16/16 (scoped for Trevor).
+
 ### Next (open, all additive / Trevor)
 - (a) Site repo — add the spancheck card + case study (body ready at `docs/CASE-STUDY.md`); the card CTA is now a real
   `pip install spancheck`. Copy/paste brief handed over in-session. (b) A RESUME-UPDATES line now that real numbers +
-  a live package exist ([[keep-resume-updates-current]]). (c) Optional forward work: a second real adapter,
-  source-scoped citations, broader corpora — better as interview talking points than proactive build.
+  a live package exist ([[keep-resume-updates-current]]). (c) **Gate 7 → 2:** a messier multi-document dogfood corpus
+  (decisions scoped in-session). (d) Optional: a second real adapter, source-scoped citations.
