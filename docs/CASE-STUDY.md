@@ -71,29 +71,32 @@ opt-in judge upgrades it to true entailment, while provenance is always determin
 
 ## How it's verified
 
-Measured, not asserted. `spancheck` was run end-to-end against the real product pipeline as a black box (Suver's
-answer-a-document tool on `claude-sonnet-5`, over its own sample contract), and the judge was calibrated against a
-human-labelled gold set.
+Measured, not asserted. `spancheck` was run end-to-end against the real product pipeline as a black box (a grounded
+answer tool on `claude-sonnet-5`), and the judge was calibrated against a human-labelled gold set. Two dogfood runs: a
+single tidy contract, and a messy four-document corpus (a Master Services Agreement, a superseding Amendment, a
+Statement of Work, and a Data Processing Addendum) with deliberate cross-document conflicts.
 
 | What | Result |
 |---|---|
-| Dogfood: citation accuracy on a real pipeline | **1.00** — every cited span was real and supported its claim |
-| Dogfood: hallucination (groundedness) | **0 hallucinations** (groundedness pass-rate 1.00) |
-| Dogfood: abstention correctness | 11/12 — spancheck **caught one false-abstention** (the system declined an answerable, paraphrased question) |
-| Dogfood: overall pass-rate across 12 cases | **0.967** |
-| Judge calibration vs human gold set (stub) | 0.75 — a safe, zero-cost floor; no false positives |
-| Judge calibration vs human gold set (claude-sonnet-5) | **1.00** (12/12) — closes exactly the paraphrase cases the stub missed |
-| Test suite | **68 tests**, green on a clean `pip install` and in CI (Python 3.11 & 3.12) |
+| Single-doc dogfood: overall pass-rate (12 cases) | **0.967** — spancheck **caught one false-abstention** (the system declined an answerable, paraphrased question) |
+| Multi-doc dogfood: overall pass-rate (21 cases, 4 conflicting documents) | **1.00** |
+| Multi-doc: source-scoped citation accuracy | **47/47** citations verified against the specific document they named — both sides of each conflict (base agreement *and* amendment) cited correctly |
+| Hallucination (groundedness), both runs | **0 hallucinations** |
+| Judge calibration vs human gold set — stub / claude-sonnet-5 | 0.75 (a zero-cost floor, no false positives) / **1.00** (12/12) — closing exactly the paraphrase cases the stub missed |
+| Test suite | **71 tests**, green on a clean `pip install` and in CI (Python 3.11 & 3.12) |
 
-The single dogfood miss is the headline value: the eval found a real recall gap in a shipping system — not a spancheck
-bug, a measured behaviour — which is what an eval is for.
+The single-doc miss is the headline value of an eval: it found a real recall gap in a shipping system — not a spancheck
+bug, a measured behaviour. The multi-doc run is the harder test — messy, conflicting, cross-referenced input, scored
+with **source-scoped provenance** (a span attributed to the wrong document fails even if it exists elsewhere) — and it
+confirms the system attributes every claim to the right source.
 
 ## What I'd do differently
 
-- **Scope citations to their named source.** A cited span found in *any* retrieved context currently passes; tying a
-  citation to the specific document it names would tighten multi-document provenance.
-- **Broaden the dogfood corpus.** One sample contract exercises the four case categories cleanly, but a larger,
-  multi-document corpus would stress retrieval harder and surface more of the kind of gap the one miss hints at.
+- **A second real target beyond one product.** Both dogfoods score the same pipeline; a second, differently-built target
+  would show the adapter generalising in public rather than in principle.
+- **Push the judge past a 12-item gold set.** The real judge scored 12/12; a larger held-out slice where it is
+  *sometimes* wrong would make the "reports its own judge's error rate" story sharper — though that edges into
+  benchmark territory, which is deliberately out of scope here.
 
 ## Limits
 
@@ -101,8 +104,10 @@ bug, a measured behaviour — which is what an eval is for.
   opt-in, calibrated judge is the upgrade for true entailment.
 - **Provenance requires a verbatim quote.** A paraphrased citation fails by design — a deliberate incentive to quote
   sources exactly.
+- **Source-scoping needs per-source text.** Attribution is checked against the named document only when the caller
+  supplies a `{source_id: text}` map; otherwise provenance falls back to all retrieved contexts.
 - **The metrics are only as good as the test set you bring.** spancheck scores a system against cases you author; it
-  does not generate them.
+  does not generate them. It is not a general-purpose eval platform, and not a benchmark.
 
 ## Closing
 

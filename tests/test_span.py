@@ -68,6 +68,40 @@ def test_empty_span_fails():
     assert v.ok is False and "empty" in v.reason
 
 
+# ---------------- source-scoped provenance (a citation attributed to the wrong document) ----------------
+_SOURCES = {
+    "MSA": "Either party may terminate the agreement with 30 days written notice.",
+    "Invoicing Policy": "Invoices are payable within 45 days of receipt.",
+}
+
+
+def test_citation_scoped_to_the_right_source_passes():
+    v = verify_citation(
+        {"span": "Either party may terminate the agreement with 30 days written notice",
+         "claim": "Either party may terminate with 30 days written notice", "source_id": "MSA"},
+        contexts=list(_SOURCES.values()), sources=_SOURCES)
+    assert v.scoped is True and v.span_found is True and v.ok is True
+
+
+def test_citation_attributed_to_wrong_source_fails_even_though_span_is_real():
+    # the span is real and present in the corpus, but it is NOT in the source the citation names
+    v = verify_citation(
+        {"span": "Invoices are payable within 45 days of receipt",
+         "claim": "Invoices are payable within 45 days", "source_id": "MSA"},  # wrong doc
+        contexts=list(_SOURCES.values()), sources=_SOURCES)
+    assert v.scoped is True
+    assert v.span_found is False          # not found in its CITED source (the MSA)
+    assert v.ok is False and "misattributed" in v.reason
+
+
+def test_unscoped_when_no_sources_falls_back_to_all_contexts():
+    v = verify_citation(
+        {"span": "Invoices are payable within 45 days of receipt", "claim": "Invoices are payable within 45 days",
+         "source_id": "MSA"},
+        contexts=list(_SOURCES.values()))  # no sources map -> can't scope -> checks all contexts
+    assert v.scoped is False and v.span_found is True
+
+
 def test_bare_string_citation_is_accepted_as_a_span():
     v = verify_citation("Either party may terminate the agreement with 30 days written notice", CTX,
                         answer="Either party may terminate the agreement with 30 days written notice")

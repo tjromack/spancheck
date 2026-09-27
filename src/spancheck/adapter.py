@@ -32,6 +32,7 @@ class Output:
     answer: str = ""
     contexts: list = field(default_factory=list)   # retrieved context passages the answer should be grounded in
     citations: list = field(default_factory=list)  # citations backing the answer (span shape fixed in Phase 2)
+    sources: dict = field(default_factory=dict)     # {source_id: full text} — enables source-scoped provenance
     usage: dict = field(default_factory=dict)       # e.g. {"input_tokens", "output_tokens", "cost_usd"}
     latency_ms: float | None = None                 # wall-clock for the call; filled by adapter/evaluate if absent
     abstained: bool | None = None                   # explicit abstention signal, if the system emits one
@@ -60,10 +61,16 @@ def normalize(value) -> Output:
         citations = value.get("citations", [])
         if not isinstance(citations, list):
             citations = [citations]
+        sources = value.get("sources", {}) or {}
+        if isinstance(sources, dict):
+            sources = {str(k): str(v) for k, v in sources.items()}
+        else:
+            sources = {}
         return Output(
             answer="" if answer is None else str(answer),
             contexts=[str(c) for c in ctx],
             citations=citations,
+            sources=sources,
             usage=dict(value.get("usage", {}) or {}),
             latency_ms=value.get("latency_ms"),
             abstained=value.get("abstained"),

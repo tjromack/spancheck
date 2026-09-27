@@ -84,9 +84,10 @@ def _citation_verdicts(out: Output):
     """Per-citation verdicts recomputed from the cached output — the 'why' a reviewer needs."""
     verdicts = []
     for c in (out.citations or []):
-        v = verify_citation(c, out.contexts, out.answer)
+        v = verify_citation(c, out.contexts, out.answer, sources=out.sources)
         verdicts.append({
-            "span": v.span, "span_found": v.span_found, "claim_supported": v.claim_supported,
+            "span": v.span, "source_id": v.source_id, "scoped": v.scoped,
+            "span_found": v.span_found, "claim_supported": v.claim_supported,
             "ok": v.ok, "support": v.support, "reason": v.reason,
         })
     return verdicts

@@ -88,8 +88,9 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
 ## Later / maybe
 - [x] **MIT license + publish to PyPI** (AB-DEC 010) — LIVE: `pip install spancheck`,
       https://pypi.org/project/spancheck/ (v0.1.1, tag v0.1.1)
+- [x] **source-scoped citation provenance** (AB-DEC 011) + a **messy multi-document dogfood** (Suver `ask_across` over
+      4 conflicting docs → overall 1.00, 47/47 citations source-scoped) → **rubric §01 Gate 7 = 2; total 16/16**
 - [ ] more adapters (a second real target beyond Suver)
-- [ ] source-scoped citation provenance; broader / multi-document dogfood corpus
 - [ ] optional hygiene: yank 0.1.0 on PyPI (stale `--version`; 0.1.1 is latest)
 
 ---

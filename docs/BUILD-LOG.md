@@ -285,10 +285,36 @@ Raw material for the case study and any later writing — kept honest and specif
   error analysis + judge calibration).
 - Two soft spots at 1: **Gate 2** (README lacked a visual, an explicit audience, and the packet's competitor-landscape
   paragraph) and **Gate 7** (input real but a single tidy 12-case contract, not messy enough that handling it is the work).
-- **Gate 2 fixed this session → 15/16:** added `docs/cli-demo.svg` (a real run + gate render), a "Who it's for" line, a
+- **Gate 2 fixed → 15/16:** added `docs/cli-demo.svg` (a real run + gate render), a "Who it's for" line, a
   "How it compares" paragraph (Ragas/DeepEval/TruLens/promptfoo/Braintrust + the narrow differentiator), and a
   "not a general-purpose eval platform / not a benchmark" limit.
-- **Open → Gate 7:** a messier, multi-document dogfood corpus is the one remaining item to 16/16 (scoped for Trevor).
+- **Gate 7 fixed → 16/16:** the messy multi-document dogfood (below) + source-scoped provenance.
+
+### Gate 7 → 2: multi-document dogfood + source-scoped provenance (2026-09-27)
+- **Source-scoped provenance (AB-DEC 011):** `Output` gained an optional `sources` map (`{source_id: text}`); when a
+  citation names a source present in the map, `verify_citation` scopes provenance to *that document only* — a span
+  attributed to the wrong document fails as **misattributed**, distinct from *fabricated*. Backward-compatible (no map →
+  match all contexts). +3 tests, incl. "a real span attributed to the wrong doc fails."
+- **Messy 4-document corpus** (`dogfood/corpus/`): a Master Services Agreement, a **superseding Amendment** (changes
+  notice 60→90 days, governing law NY→Delaware, adds a 1.5% late fee), a cross-referencing SOW, and a DPA — deliberate
+  cross-document conflicts. 21 cases across answerable / answerable-conflict / unanswerable / adversarial.
+- **Dogfooded Suver's real `ask_across`** (its N-document tool) on claude-sonnet-5, black box
+  (`dogfood/run_dogfood_multidoc.py`). **Result: overall 1.00; 47/47 citations source-scoped and correct**, both sides
+  of each conflict cited to the right document (MSA *and* Amendment for governing law / notice). Provider confirmed
+  `anthropic` (via the nested raw + paraphrased answers), not a stub fallback.
+
+### Learnings (Gate 7)
+- **Relabelled two adversarial cases before spending.** My first-draft `adv-sixmonth` / `adv-24hr` asserted a false
+  number about a topic that *is* in the corpus — a system that *corrects* the premise would then fail a "must-abstain"
+  label, the exact "eval flagged correct behaviour" trap from the single-doc run. Swapped them for clean false-premise
+  cases where abstention is unambiguously right (arbitration venue in the amendment, an SOW termination penalty — both
+  genuinely absent). Caught it in the offline stub smoke test, before the keyed run.
+- **A perfect score is only evidence once the provider is confirmed.** The stub is extractive (verbatim doc sentences),
+  so it would *also* pass provenance and source-scoping trivially — a clean 21/21 is meaningless until you prove the
+  real model ran. Verified via the nested `raw.provider` **and** the answers being paraphrased, not extracted.
+- **Two dogfoods tell a better story than one.** Single-doc found a real defect (a false-abstention); the harder
+  multi-doc came back clean with 47/47 source-scoped attributions. Together: the eval catches real misses *and*
+  validates correct behaviour on the hard case.
 
 ### Next (open, all additive / Trevor)
 - (a) Site repo — add the spancheck card + case study (body ready at `docs/CASE-STUDY.md`); the card CTA is now a real

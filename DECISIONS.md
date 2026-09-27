@@ -247,5 +247,25 @@ licence/`pip` contradiction.
 - **Rejected:** keeping source-available and skipping PyPI (loses the `pip install` signal, though it stays consistent
   with the product); reserving the name under a no-use licence (keeps the contradiction).
 
+## AB-DEC 011 — Source-scoped citation provenance (2026-09-27)
+**Status:** Decided. Done. (Closes the "source-scoping" limit noted in AB-DEC 007.)
+
+Provenance originally checked a cited span against **all** retrieved contexts joined — so a citation attributed to
+document A passed as long as the span existed *anywhere* in the corpus, even if it actually came from document B. For a
+multi-document corpus that is a real gap: attribution is part of the audit trail.
+
+**Decision:** the `Output` gains an optional `sources` map (`{source_id: full_text}`). When a citation names a
+`source_id` present in the map, `verify_citation` scopes provenance to **that document only** — a span not found in its
+cited source fails as *misattributed*, distinct from *fabricated*. With no `sources` map, behaviour is unchanged
+(match against all contexts), so this is backward-compatible and opt-in by the shape of the data.
+
+- The audit log records `source_id` and `scoped` per citation, so a reviewer sees which citations were attribution-checked.
+- **Verified in the multi-document dogfood** (`dogfood/run_dogfood_multidoc.py`): Suver's `ask_across` scored over a
+  four-document corpus with a superseding amendment and cross-document conflicts — **47/47 citations source-scoped and
+  correct**, including both sides of each conflict (MSA *and* Amendment cited for governing law / notice period).
+- **Rejected:** inferring the source by finding which context contains the span (that defeats the point — it would
+  never catch a misattribution); requiring `sources` always (would break single-corpus callers who have no per-source
+  split).
+
 ---
-*Next entry = AB-DEC 011.*
+*Next entry = AB-DEC 012.*

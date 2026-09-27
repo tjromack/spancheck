@@ -53,21 +53,24 @@ offline — and is **calibrated before it is trusted**.
 ## Results (measured)
 
 `spancheck` was run end-to-end against a real product pipeline as a black box (a grounded answer-a-document tool on
-`claude-sonnet-5`, over its own sample contract), and the judge was calibrated against a human-labelled gold set. Full
-write-up in [`docs/CASE-STUDY.md`](docs/CASE-STUDY.md); the audit log is committed at
-[`dogfood/suver_audit.json`](dogfood/suver_audit.json).
+`claude-sonnet-5`), and the judge was calibrated against a human-labelled gold set. Two dogfood runs — a single tidy
+contract, and a **messy four-document corpus with a superseding amendment and deliberate cross-document conflicts**.
+Full write-up in [`docs/CASE-STUDY.md`](docs/CASE-STUDY.md); audit logs committed at
+[`dogfood/`](dogfood/).
 
-| Metric | Result |
+| Run / metric | Result |
 |---|---|
-| Citation accuracy (real pipeline) | **1.00** — every cited span real and supporting |
-| Hallucination (groundedness) | **0 hallucinations** (pass-rate 1.00) |
-| Abstention correctness | 11/12 — spancheck **caught one false-abstention** on the real system |
-| Overall (12 cases) | **0.967** |
+| **Single-doc dogfood** (12 cases) | overall **0.967** — spancheck **caught one real false-abstention** on the live system |
+| **Multi-doc dogfood** (21 cases, 4 conflicting documents) | overall **1.00**; **47/47 citations source-scoped and verified** — every cited span checked against the specific document it named, both sides of each conflict cited correctly |
+| Citation accuracy (both runs) | **1.00** — every cited span real, supporting, and correctly attributed |
+| Hallucination (groundedness) | **0 hallucinations** across both runs |
 | Judge vs human gold set — stub / `claude-sonnet-5` | **0.75 / 1.00** |
-| Tests | **68**, clean `pip install` + CI (3.11 & 3.12) |
+| Tests | **71**, clean `pip install` + CI (3.11 & 3.12) |
 
-The one miss is the point: the eval found a real recall gap in a shipping system — a measured behaviour, not a spancheck
-bug. Reproduce with `python dogfood/run_dogfood.py` and `python -m spancheck.calibrate --real`.
+The single-doc miss is the point of an eval: it found a real recall gap in a shipping system — a measured behaviour, not
+a spancheck bug. The multi-doc run is the harder test — messy input, conflicting sources, source-scoped provenance — and
+it confirms the system attributes every claim to the right document. Reproduce with `python dogfood/run_dogfood.py`,
+`python dogfood/run_dogfood_multidoc.py`, and `python -m spancheck.calibrate --real`.
 
 ## Command line & CI
 
@@ -151,8 +154,10 @@ spancheck score audit.json        # recompute metrics from a cached run, no netw
   it (a test pins the false-positive; the judge catches it).
 - **Provenance requires a verbatim quote.** A paraphrased citation fails provenance by design — a deliberate incentive
   for a system to quote its sources exactly. `spancheck` does not (yet) match a citation by meaning.
-- **A citation isn't scoped to its named source.** A cited span found in *any* retrieved context passes; tying a
-  citation to the specific `source_id` it names is a planned refinement.
+- **Source-scoping needs the caller to supply per-source text.** When an `Output` carries a `sources` map
+  (`{source_id: text}`) and a citation names a `source_id`, provenance is checked against *that document only* — so a
+  span attributed to the wrong document fails even if it exists elsewhere. Without a `sources` map, provenance falls
+  back to matching against all retrieved contexts.
 - **Groundedness is a word-overlap proxy too**, and the metrics are only as good as the test set you bring. `spancheck`
   measures a system against cases you author; it does not generate them.
 - **Not a general-purpose eval platform, and not a benchmark.** It scores the four trust metrics above on *your* corpus;

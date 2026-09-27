@@ -25,11 +25,13 @@ from .core import GradeResult
 @dataclass
 class CitationVerdict:
     span: str
-    span_found: bool        # (a) provenance: the span is present, verbatim (normalised), in the contexts
+    span_found: bool        # (a) provenance: the span is present, verbatim (normalised), in the source/contexts
     claim_supported: bool   # (b) support: the span covers the claim's content (lexical proxy)
     ok: bool                # span_found AND claim_supported
     support: float          # the coverage fraction behind claim_supported (0..1), for transparency
     reason: str
+    source_id: str = None   # the source this citation names, if any
+    scoped: bool = False    # True when provenance was checked against the NAMED source only
 
 
 def _coerce_citation(c) -> dict:
@@ -53,20 +55,29 @@ def _covers(claim: str, span: str, threshold: float):
 
 
 def verify_citation(citation, contexts, answer: str = "", support_threshold: float = 0.6,
-                    support_fn=None) -> CitationVerdict:
+                    support_fn=None, sources: dict = None) -> CitationVerdict:
     """Verify one citation against the retrieved contexts. `answer` is the default claim when the citation names none.
 
     `support_fn`, if given, is a `(claim, span) -> (supported: bool, score: float)` callable used for the support check
     instead of the built-in lexical proxy — e.g. `spancheck.judge_support(provider=...)` for model-judged entailment.
     Provenance is always deterministic and is never delegated to a judge.
+
+    `sources` (a `{source_id: text}` map), if given and the citation names a `source_id` present in it, scopes
+    provenance to that **named source only** — so a span attributed to the wrong document fails even when it exists
+    elsewhere in the corpus.
     """
     cit = _coerce_citation(citation)
     span = cit["span"]
+    src_id = cit.get("source_id")
     if not span or not span.strip():
-        return CitationVerdict("", False, False, False, 0.0, "empty citation span")
+        return CitationVerdict("", False, False, False, 0.0, "empty citation span", source_id=src_id)
 
-    # (a) provenance — strict normalised substring match against the joined contexts
-    haystack = norm(" \n ".join(str(c) for c in (contexts or [])))
+    # (a) provenance — strict normalised substring match. Scoped to the named source when we can; else all contexts.
+    scoped = bool(sources and src_id and src_id in sources)
+    if scoped:
+        haystack = norm(str(sources[src_id]))
+    else:
+        haystack = norm(" \n ".join(str(c) for c in (contexts or [])))
     span_found = norm(span) in haystack
 
     # (b) support — does the span cover the claim (the cited sentence, else the whole answer)?
@@ -81,12 +92,13 @@ def verify_citation(citation, contexts, answer: str = "", support_threshold: flo
 
     ok = span_found and supported
     if not span_found:
-        reason = "fabricated span: not found verbatim in the contexts"
+        reason = (f"misattributed span: not found in its cited source {src_id!r}" if scoped
+                  else "fabricated span: not found verbatim in the contexts")
     elif not supported:
         reason = f"unsupported ({how}): span covers {frac} of the claim (< {support_threshold if how == 'lexical' else 'judge threshold'})"
     else:
-        reason = f"verified ({how}): span present, support {frac}"
-    return CitationVerdict(span, span_found, supported, ok, frac, reason)
+        reason = f"verified ({how}{', source-scoped' if scoped else ''}): span present, support {frac}"
+    return CitationVerdict(span, span_found, supported, ok, frac, reason, source_id=src_id, scoped=scoped)
 
 
 def citation_accuracy(name: str = "citation_accuracy", support_threshold: float = 0.6,
@@ -113,7 +125,8 @@ def citation_accuracy(name: str = "citation_accuracy", support_threshold: float 
                 return GradeResult(name, 0.0, False, "answer makes a claim but cites no span (unverifiable)")
             return GradeResult(name, 1.0, True, "no citations present; citation not required")
 
-        verdicts = [verify_citation(c, out.contexts, out.answer, support_threshold, support_fn=support_fn)
+        verdicts = [verify_citation(c, out.contexts, out.answer, support_threshold, support_fn=support_fn,
+                                    sources=out.sources)
                     for c in cits]
         n_ok = sum(1 for v in verdicts if v.ok)
         frac = n_ok / len(verdicts)

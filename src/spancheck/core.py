@@ -144,7 +144,7 @@ class Run:
     def _restore_output(out):
         """Reconstruct an Output from its JSON dict (so a loaded run is re-gradable offline)."""
         if isinstance(out, dict):
-            fields = {"answer", "contexts", "citations", "usage", "latency_ms", "abstained", "raw"}
+            fields = {"answer", "contexts", "citations", "sources", "usage", "latency_ms", "abstained", "raw"}
             return Output(**{k: v for k, v in out.items() if k in fields})
         return out
 

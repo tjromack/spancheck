@@ -1,0 +1,17 @@
+DATA PROCESSING ADDENDUM
+
+This Data Processing Addendum ("DPA") supplements the Master Services Agreement and applies whenever the Provider
+processes Personal Data on behalf of the Client. In the event of a conflict between this DPA and the Agreement with
+respect to the processing of Personal Data, this DPA controls.
+
+Security Incident Notification. The Provider will notify the Client of a confirmed personal-data breach without undue
+delay and in any event within seventy-two (72) hours of becoming aware of it.
+
+Sub-processors. The Provider will not engage any sub-processor to process Personal Data without the Client's prior
+written consent. A current list of approved sub-processors is maintained on request.
+
+Return and Deletion. Upon termination or expiry of the Agreement, the Provider will, at the Client's choice, return or
+delete all Personal Data within thirty (30) days, except where retention is required by law.
+
+International Transfers. The Provider will not transfer Personal Data outside the country of collection without an
+approved transfer mechanism.

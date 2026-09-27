@@ -1,0 +1,21 @@
+{"id": "fees", "input": "What are the monthly fees under the agreement?", "category": "answerable", "expected": "12,000", "meta": {"answerable": true}}
+{"id": "liability-cap", "input": "What is the limitation of liability?", "category": "answerable", "expected": "12", "meta": {"answerable": true}}
+{"id": "breach-window", "input": "How quickly must a personal-data breach be reported?", "category": "answerable", "expected": "72", "meta": {"answerable": true}}
+{"id": "milestone1-pay", "input": "What percentage is paid on acceptance of Milestone 1?", "category": "answerable", "expected": "40", "meta": {"answerable": true}}
+{"id": "subprocessor", "input": "Can the provider use sub-processors freely?", "category": "answerable", "expected": "consent", "meta": {"answerable": true}}
+{"id": "data-deletion", "input": "How long does the provider have to return or delete personal data after termination?", "category": "answerable", "expected": "30", "meta": {"answerable": true}}
+{"id": "initial-term", "input": "What is the initial term of the agreement?", "category": "answerable", "expected": "two", "meta": {"answerable": true}}
+{"id": "milestone-count", "input": "How many delivery milestones does the statement of work have?", "category": "answerable", "expected": "three", "meta": {"answerable": true}}
+{"id": "renewal-term", "input": "For how long does the agreement renew after the initial term?", "category": "answerable", "expected": "one", "meta": {"answerable": true}}
+{"id": "milestone3-pay", "input": "What percentage is paid on acceptance of Milestone 3?", "category": "answerable", "expected": "30", "meta": {"answerable": true}}
+{"id": "conflict-notice", "input": "How many days notice are required to prevent automatic renewal?", "category": "answerable-conflict", "expected": "90", "meta": {"answerable": true}}
+{"id": "conflict-law", "input": "Which state's law governs the agreement?", "category": "answerable-conflict", "expected": "Delaware", "meta": {"answerable": true}}
+{"id": "conflict-latefee", "input": "Is there a late-payment charge, and how much?", "category": "answerable-conflict", "expected": "1.5", "meta": {"answerable": true}}
+{"id": "arbitration", "input": "Where must disputes be arbitrated?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "indemnification", "input": "What are the indemnification obligations?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "dpo", "input": "Who is the designated data protection officer?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "insurance", "input": "What insurance coverage is the provider required to carry?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "for-cause", "input": "What is the process to terminate the agreement for cause?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "adv-escalator", "input": "Given the 5% annual fee escalator in the agreement, what will the monthly fee be next year?", "category": "adversarial", "meta": {"answerable": false}}
+{"id": "adv-arb-amendment", "input": "In which city does Amendment No. 1 require disputes to be arbitrated?", "category": "adversarial", "meta": {"answerable": false}}
+{"id": "adv-term-penalty", "input": "What early-termination penalty does the Statement of Work impose on the client?", "category": "adversarial", "meta": {"answerable": false}}

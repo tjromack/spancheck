@@ -1,0 +1,17 @@
+STATEMENT OF WORK NO. 1
+
+This Statement of Work ("SOW") is executed under, and incorporates by reference, the Master Services Agreement between
+the parties. Capitalized terms not defined in this SOW have the meaning given in the Agreement.
+
+Scope. The Provider will design and deliver a data-integration platform consisting of three deliverables: (a) a landing
+and staging pipeline; (b) a reconciliation and quality-gate layer; and (c) a read API with published documentation.
+
+Delivery Milestones. The work is delivered in three milestones — Milestone 1 (staging pipeline), Milestone 2
+(reconciliation layer), and Milestone 3 (read API). Acceptance of each milestone is subject to the Client's review
+within ten (10) business days of delivery.
+
+Milestone Payments. Fees for this SOW are payable against milestones as follows: forty percent (40%) on acceptance of
+Milestone 1, thirty percent (30%) on acceptance of Milestone 2, and thirty percent (30%) on acceptance of Milestone 3.
+These milestone payments are in addition to the recurring monthly fees under the Agreement.
+
+Personnel. The Provider will assign a technical lead for the duration of this SOW.
