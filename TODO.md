@@ -76,10 +76,14 @@ Decisions already settled (do not re-open): `DECISIONS.md` AB-DEC 001–004.
 - [x] 66 tests pass; console script verified in a clean non-editable install. **← stop for approval before Phase 6**
 
 ## Phase 6 — dogfood + case study + the harness copy pass
-- [ ] run `spancheck` end-to-end against Suver's published case study as a black box → real scorecard + audit log
+- [ ] **dogfood = option A** (Trevor 2026-09-27): score a real grounded system over real material, low/no cost.
+      Source doc(s) + capture method TBC with Trevor; produce a real scorecard + audit log (`spancheck run … --out`)
 - [ ] `docs/CASE-STUDY.md` — framed as the evolution of the harness (AB-DEC 003), with the measured numbers
-- [ ] the harness copy pass — **only now** that the API is stable: move "points at any LLM via a thin adapter" +
-      "capstone" claims here; re-describe the harness as "the version that proved the method against one real target"
+- [ ] optional keyed **judge calibration** for the real agreement number (`python -m spancheck.calibrate --real`)
+- [ ] the harness copy pass (API is stable). **Per Trevor 2026-09-27:** move "points at any LLM via a thin adapter" to
+      spancheck (done here) and re-describe the harness as "the version that proved the method against one real target";
+      **remove the "capstone" claim ENTIRELY from the harness — do NOT bring it to spancheck** (9 files: README, CLAUDE,
+      DECISIONS, DEMO, MASTERY, PORTFOLIO_README, docs/CASE-STUDY)
 - [ ] README `Status` updated with real numbers; **stop for approval**
 
 ## Later / maybe

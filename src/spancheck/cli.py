@@ -134,6 +134,8 @@ def main(argv=None) -> int:
         sys.stdout.reconfigure(encoding="utf-8")
     except Exception:
         pass
+    from ._env import load_dotenv
+    load_dotenv()  # a target that calls a model can read its key from a local .env (never overwrites a real env var)
     parser = _build_parser()
     args = parser.parse_args(argv)
     if not getattr(args, "command", None):

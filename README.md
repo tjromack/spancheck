@@ -56,7 +56,13 @@ spancheck gate  audit.json citation_accuracy=1.0 groundedness=0.9   # exit 1 on 
 ```
 
 Point `--target` at your own system with `module:callable` (any `input -> answer` function; the answer may be a string
-or a dict with `contexts`/`citations`/`usage`). As a **GitHub Action** (fails a PR on a regression):
+or a dict with `contexts`/`citations`/`usage`).
+
+The deterministic path needs no key. The **opt-in LLM-judge** (`--real` calibration, or `judge_support(provider=...)`)
+reads `ANTHROPIC_API_KEY` — set it in the environment, or drop it in a gitignored `.env` at the repo root
+(`ANTHROPIC_API_KEY=sk-ant-...`), which the CLI and `spancheck.calibrate` load automatically.
+
+As a **GitHub Action** (fails a PR on a regression):
 
 ```yaml
 - uses: tjromack/spancheck@main

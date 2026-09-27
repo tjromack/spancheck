@@ -51,10 +51,16 @@ other in the portfolio; they read as a **sequence**, and `spancheck` gets its ow
 
 Two consequences, executed as part of this build:
 
-- **The harness gets a small copy pass** — but only *once `spancheck`'s public API is stable enough that the claim is
-  actually true.* The harness README currently claims the ground this package is being built to take ("points at any
-  LLM system through a thin adapter," "this is the capstone"); those move here, and the harness is re-described as what
-  it was — the version that proved the method against one real target. **Not before** the API is stable.
+- **The harness gets a small copy pass** — the API is now stable (Phases 1–5 shipped), so this runs in Phase 6.
+  **Refined by Trevor (2026-09-27):**
+  - The **"points at any LLM through a thin adapter"** claim moves to `spancheck` (already true and stated here); the
+    harness is re-described as **"the version that proved the method against one real target"** (a regulatory RAG
+    copilot, judge agreement 1.00 on a human gold set).
+  - The **"capstone" claim is dropped ENTIRELY — from both repos.** It is not moved to `spancheck` and not kept in the
+    harness. Rationale (Trevor): naming any single project the portfolio's *capstone* caps the ceiling of the whole
+    portfolio; the harness is a strong project to show off, but it is not *the* capstone, and neither is `spancheck`.
+    (The 9 "capstone" mentions across the harness — README, CLAUDE, DECISIONS, DEMO, MASTERY, PORTFOLIO_README,
+    docs/CASE-STUDY — get removed/reworded in the Phase-6 copy pass.)
 - **Lineage is written down as it goes** — what carried over from `evallab` unchanged, what was rewritten and why,
   what the harness got wrong that this fixes. That is the substance of the second case study and is near-impossible to
   reconstruct afterwards. Kept in `LINEAGE.md` in this repo; polish is not required.

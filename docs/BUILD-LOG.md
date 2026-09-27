@@ -191,3 +191,32 @@ Raw material for the case study and any later writing — kept honest and specif
   study, as a black box) producing a real scorecard + audit log, the **case study** framed as the harness's evolution,
   and the **harness copy pass** (now that the API is stable). This is the phase that most benefits from a review — and
   from the optional keyed calibration number — so a natural point to sync with Trevor.
+
+---
+
+## 2026-09-27
+
+### What happened
+- New session (paused before Phase 6 last time). Trevor answered the three pre-Phase-6 questions and I did the enabling
+  setup so his manual steps are minimal.
+
+### Decisions (Trevor, 2026-09-27)
+- **Dogfood target = option A** — score a real grounded system over real material, low/no cost (no big keyed run).
+  Exact source doc(s) + capture method to be confirmed before Phase 6 executes.
+- **API key created for spancheck.** Placement solved: added a **dependency-free `.env` loader** (`_env.py`) wired into
+  `spancheck.calibrate` and the CLI, so a key in `c:/ai/spancheck/.env` is picked up automatically (never overwrites a
+  real env var; `.env` is gitignored). No new dependency.
+- **Harness copy pass — refined:** move "points at any LLM via a thin adapter" to spancheck (already there) and
+  re-describe the harness as "the version that proved the method against one real target"; **drop the "capstone" claim
+  ENTIRELY from both repos.** Trevor's rationale, banked: *naming any one project the portfolio's capstone caps the
+  ceiling of the whole portfolio.* Recorded in AB-DEC 003 + TODO Phase 6; execution is in Phase 6 (9 harness files).
+
+### Work done today
+- `_env.py` (+ `test_env.py`): the .env loader; wired into `calibrate.main` and `cli.main`.
+- Recorded the copy-pass refinement in `DECISIONS.md` (AB-DEC 003) and `TODO.md` (Phase 6).
+- Outlined the remaining manual steps for Trevor (key placement + dogfood-source confirmation + spend authorisation).
+
+### Open / next
+- Awaiting Trevor: (1) drop the key in `.env`; (2) confirm the dogfood source document + capture method + authorise the
+  small keyed spend; then Phase 6 runs (dogfood → real scorecard/audit log → case study → harness copy pass). The
+  optional real judge-calibration number folds in at the same time.

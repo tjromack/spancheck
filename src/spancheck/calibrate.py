@@ -68,6 +68,9 @@ def main(argv=None) -> int:
     p.add_argument("--model", default="claude-sonnet-5")
     a = p.parse_args(argv)
 
+    from ._env import load_dotenv
+    load_dotenv()  # pick up ANTHROPIC_API_KEY from a local .env if present (never overwrites a real env var)
+
     gold = load_gold(a.gold)
     provider = None
     model = None
