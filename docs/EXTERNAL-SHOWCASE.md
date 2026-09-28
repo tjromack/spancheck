@@ -45,7 +45,7 @@ citations must attribute to the *right* article (exercises spancheck's source-sc
 | Target | License | Emits | Status |
 |---|---|---|---|
 | **Kotaemon** (Cinnamon Labs) | Apache-2.0 | span-level citations (`CiteEvidence`: verbatim source substrings) | ✅ **Scored** — 21 healthcare cases on claude-sonnet-5. Provenance + attribution **18/18 source-scoped**; caught a fabricated citation + a failed abstention on an adversarial case; surfaced a metric-design finding. See [`../showcase/kotaemon/FINDINGS.md`](../showcase/kotaemon/FINDINGS.md). |
-| **AnythingLLM** (Mintplex Labs) | MIT | retrieved **source chunks** via REST API (not span-level citations) | 🟡 **PARTIAL** — runs as a Docker container, Anthropic-configured, healthy; API needs a dev key (one manual UI step). spancheck will score abstention, groundedness, cost/latency, and source attribution. A deliberate contrast to Kotaemon's FULL span-citations. Capture script ready (`showcase/anythingllm/`). |
+| **AnythingLLM** (Mintplex Labs) | MIT | retrieved **source chunks** via REST API (would have been PARTIAL) | 🔴 **Blocked (this environment)** — container + chat API + dev key all work, Anthropic configured, but **document ingestion fails** (collector `500` / "Failed integrity signature check"), so the corpus can't be embedded. Diagnosed to the collector layer; likely the proxy again, but the collector doesn't surface the real error and it exceeded the time-box. Honest write-up + fix path in [`../showcase/anythingllm/FINDINGS.md`](../showcase/anythingllm/FINDINGS.md). |
 
 ## Appendix — reproducible Kotaemon setup (the hard-won recipe)
 

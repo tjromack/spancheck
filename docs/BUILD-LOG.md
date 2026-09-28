@@ -383,3 +383,21 @@ Raw material for the case study and any later writing — kept honest and specif
   its own case study ("Evaluating in the wild") — distinct from spancheck's own case study.** Kotaemon = chapter 1
   (env saga + honest findings + a fix the run produced); AnythingLLM = chapter 2 (next). Documenting the *process and
   lessons*, not just numbers, from here — that narrative is the substance of that second case study.
+
+### External showcase ch.2 — AnythingLLM: an honest blocker (2026-09-28)
+- Stood up AnythingLLM (MIT) as a Docker container (Trevor started Docker), configured for Anthropic + built-in
+  embedder/LanceDB. Container healthy; **its outbound HTTPS worked through the proxy** (synced remote model/pricing) —
+  a cleaner start than Kotaemon. Chat API + the dev API key work; the response shape (`textResponse`, `sources`,
+  `metrics`) confirms it's a **PARTIAL** target (source *chunks*, not span citations — the intended Kotaemon contrast).
+- **Blocked on document ingestion.** Every `/document/raw-text` call → backend `500 "Response could not be completed"`;
+  the collector returns `"Failed integrity signature check"` and, on the backend's signed calls, receives the request
+  (logs its tokenizer init) then fails **without surfacing the real error**. Setting `SIG_KEY`/`SIG_SALT` + restart did
+  not fix it; likely the collector's processing/embedding hitting the TLS proxy again, but it's unconfirmable in the
+  time-box. Documented the fix path (mount the proxy CA as `NODE_EXTRA_CA_CERTS`) and **stopped, per the runbook rule**.
+- ⭐ **This is real Case-Study-B content, not a failure to hide:** two real systems, two failure modes — Kotaemon
+  (Python) fought hard and cracked into a FULL scored run; AnythingLLM (Docker) started clean but its collector is
+  opaquely broken behind this proxy. "Knowing when to stop is part of the discipline." Manual key mix-up also banked:
+  a `Set-Content` arg-swap saved the key as the *filename*; recovered it programmatically without re-typing it.
+- **Manual key note:** the AnythingLLM dev key briefly appeared in tool output (as a filename) — it's a *local* dev key
+  (only valid against localhost:3001 on Trevor's machine, no billing/cloud exposure); regenerate + revoke in the UI for
+  clean hygiene if desired. Container left running; `docker rm -f anythingllm` to remove.
