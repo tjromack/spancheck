@@ -29,3 +29,6 @@ Thumbs.db
 
 # Derived showcase score outputs (regenerated from capture.json by the score scripts)
 showcase/*/audit*.json
+
+# AnythingLLM showcase API key (local, never committed)
+.anythingllm_key
