@@ -27,3 +27,11 @@ def words(s) -> set:
 def content_words(s):
     """Meaningful tokens: lowercased words that aren't stopwords and are longer than two characters."""
     return [w for w in WORD.findall((s or "").lower()) if w not in STOP and len(w) > 2]
+
+
+_SENT = re.compile(r"(?<=[.!?])\s+|\n+")
+
+
+def sentences(text):
+    """Split text into sentences (on ., !, ? and newlines), dropping fragments shorter than 16 chars."""
+    return [s.strip() for s in _SENT.split(text or "") if len(s.strip()) > 15]

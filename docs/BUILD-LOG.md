@@ -371,3 +371,15 @@ Raw material for the case study and any later writing — kept honest and specif
   friction Kotaemon had). Then fold both into a "real-world use" case-study section (Kotaemon part already added).
 - Optional spancheck enhancement named by this run: a `provenance-only` / claim-splitting mode for answer-level-citation
   systems. Third-party project clones + venvs live outside the repo (`~/showcase-targets/`); only our artifacts commit.
+
+### Enhancement (2026-09-28): `claim_split` — the Kotaemon finding, fixed (v0.3.0)
+- Turned the metric-design finding into a shipped option (AB-DEC 012): `citation_accuracy(claim_split=True)` scores an
+  unscoped citation's support against the answer **sentence it's most relevant to**, not the whole answer — the fair
+  question for systems that emit a detailed answer + short answer-level quotes. A truly irrelevant quote still fails,
+  so it's strictly fairer, not laxer. Opt-in (keeps every existing committed number intact). +1 test (72 total).
+- **Re-scored the same captured Kotaemon run: citation accuracy 0.286 → 0.762** — the remaining failures are the
+  genuinely fabricated citations (the real catches). Folded into `FINDINGS.md` and the case study.
+- ⭐ **Case-study framing (Trevor, 2026-09-28): the *practice* of pointing spancheck at other people's real systems is
+  its own case study ("Evaluating in the wild") — distinct from spancheck's own case study.** Kotaemon = chapter 1
+  (env saga + honest findings + a fix the run produced); AnythingLLM = chapter 2 (next). Documenting the *process and
+  lessons*, not just numbers, from here — that narrative is the substance of that second case study.

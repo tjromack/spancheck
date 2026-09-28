@@ -267,5 +267,28 @@ cited source fails as *misattributed*, distinct from *fabricated*. With no `sour
   never catch a misattribution); requiring `sources` always (would break single-corpus callers who have no per-source
   split).
 
+## AB-DEC 012 — `claim_split`: fair support scoring for answer-level citations (2026-09-28)
+**Status:** Decided. Done. (Surfaced by the Kotaemon external showcase — see `showcase/kotaemon/FINDINGS.md`.)
+
+`citation_accuracy`'s support check scores a citation's span against its `claim`, which defaults to the **whole
+answer**. That is right for **claim-scoped** citations (the dogfood set each citation's `claim` and scored 1.00). But a
+real third-party system (Kotaemon) emits a **detailed answer with a few short, answer-level evidence quotes** — no
+per-claim scoping — and asking each 15-word quote to support a whole paragraph under-scored it (0.29 lexical, 0.43
+judged) even though the quotes were verbatim, correctly attributed, and on-topic.
+
+**Decision:** add `claim_split` (opt-in) to `verify_citation` / `citation_accuracy`. When a citation has no explicit
+`claim` and `claim_split=True`, support is scored against the answer **sentence the span is most relevant to** (highest
+lexical overlap), not the whole answer — the fair question for answer-level citations: *does this quote support the
+claim it is most plausibly offered for?* A truly irrelevant quote still fails (its best sentence clears no threshold),
+so this is strictly fairer, not laxer.
+
+- On the Kotaemon run, `claim_split=True` moved citation accuracy **0.286 → 0.762**; the remaining failures are the
+  genuinely **fabricated** (non-verbatim) citations — the eval's real catches.
+- **Opt-in, not default:** whole-answer support is a legitimate strict reading for single-citation answers, and keeping
+  the default unchanged leaves every existing committed number (dogfood, demo) intact. A caller enables it for
+  answer-level-citation systems.
+- **Rejected:** a `provenance-only` mode (throws away the support signal entirely — claim-splitting keeps it, correctly
+  scoped); making it the default (a behaviour change to a shipped metric without a caller asking).
+
 ---
-*Next entry = AB-DEC 012.*
+*Next entry = AB-DEC 013.*

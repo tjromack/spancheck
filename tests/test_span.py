@@ -178,6 +178,19 @@ def test_uncited_answer_fails_by_default_but_passes_when_not_required():
     assert lenient["citation_accuracy"]["pass_rate"] == 1.0
 
 
+def test_claim_split_scores_answer_level_citations_fairly():
+    # A detailed answer with a short evidence quote that supports ONE sentence, not the whole answer.
+    answer = ("Medicare is a federal health insurance program. It covers people age 65 or older. "
+              "It was established in 1965 and is administered by CMS.")
+    out = Output(answer=answer, contexts=["Medicare covers people age 65 or older."],
+                 citations=[{"span": "Medicare covers people age 65 or older"}])  # no explicit claim
+    case = Case("c", "q", meta={"answerable": True})
+    strict = citation_accuracy()(case, out)                     # judged against the WHOLE answer -> under-scores
+    split = citation_accuracy(claim_split=True)(case, out)      # judged against the best-matching sentence -> supported
+    assert strict.passed is False
+    assert split.passed is True
+
+
 def test_abstention_passes_citation_accuracy_trivially():
     sc = evaluate([Case("c", "q", meta={"answerable": False})], abstaining_system).scorecard().by_grader()
     assert sc["citation_accuracy"]["pass_rate"] == 1.0

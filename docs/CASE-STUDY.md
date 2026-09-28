@@ -101,10 +101,12 @@ Apache-2.0 citation-RAG application — as a black box: Kotaemon's own citation 
   to the exact document they named** — spancheck verified a system it had never seen and got attribution 100% right.
 - **It caught a real defect.** On an adversarial false-premise question, Kotaemon answered instead of abstaining and
   produced a **fabricated (non-verbatim) citation**; spancheck's provenance check flagged it.
-- **It surfaced an assumption in its own metric.** The support score under-scored (0.29 lexical, 0.43 judged) because
-  Kotaemon emits a *detailed answer with short, answer-level* evidence quotes, and spancheck's support check judges each
-  quote against the whole answer — it is calibrated for *claim-scoped* citations (as the dogfood used). The fair metric
-  for answer-level-citation systems is provenance + attribution; claim-splitting is the enhancement this run named.
+- **It surfaced an assumption in its own metric — and a fix followed.** The support score under-scored (0.29 lexical,
+  0.43 judged) because Kotaemon emits a *detailed answer with short, answer-level* evidence quotes, while spancheck's
+  support check judged each quote against the *whole* answer — it was calibrated for *claim-scoped* citations. Adding an
+  opt-in `claim_split` (score support against the answer sentence a span is most relevant to) moved the same run
+  **0.286 → 0.762**, with the remaining failures being the genuinely fabricated citations. Using the tool on a system it
+  didn't design for improved the tool.
 
 Full write-up: [`showcase/kotaemon/FINDINGS.md`](../showcase/kotaemon/FINDINGS.md).
 

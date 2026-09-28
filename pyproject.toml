@@ -4,7 +4,7 @@ build-backend = "setuptools.build_meta"
 
 [project]
 name = "spancheck"
-version = "0.2.0"
+version = "0.3.0"
 description = "Score a grounded-answer system on citation accuracy, abstention correctness, hallucination rate, cost and latency — with an audit log a compliance reviewer can read."
 readme = "README.md"
 requires-python = ">=3.11"

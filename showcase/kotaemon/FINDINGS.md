@@ -36,14 +36,24 @@ check flagged it. (Separately, on four correctly-*abstained* off-corpus question
 emitted a non-verbatim evidence string — moot, since the answer abstained, but a notable mismatch between its answer and
 citation stages.)
 
-**3. An honest finding about spancheck's *own* metric.** `citation_accuracy`'s support check under-scored (lexical
-0.29, judge 0.43) — but the failures are all `unsupported`, not `fabricated`: the quotes are real and on-topic. The
-cause is a design assumption: spancheck's support check judges each citation against the citation's *claim*, which
-defaults to the **whole answer**. Kotaemon answers *in detail* and attaches a few short, answer-level evidence quotes
-(not per-claim citations), so "does this 15-word quote support the entire paragraph?" scores low — even for the LLM
-judge. The dogfood scored 1.00 precisely because its citations were **claim-scoped**. The fair metric for
-answer-level-citation systems is **provenance + attribution** (finding 1); claim-splitting, or a `provenance-only`
-support mode, is the enhancement this run surfaced.
+**3. An honest finding about spancheck's *own* metric — then a fix.** `citation_accuracy`'s support check under-scored
+(lexical 0.29, judge 0.43) — but the failures were all `unsupported`, not `fabricated`: the quotes are real and
+on-topic. The cause was a design assumption: the support check judges each citation against its *claim*, which defaults
+to the **whole answer**. Kotaemon answers *in detail* with a few short, answer-level evidence quotes (not per-claim
+citations), so "does this 15-word quote support the entire paragraph?" scores low. The dogfood scored 1.00 precisely
+because its citations were **claim-scoped**.
+
+The fix (spancheck `claim_split`, AB-DEC 012): for an unscoped citation, score support against the answer *sentence the
+span is most relevant to*, not the whole answer. Re-scoring this same captured run:
+
+| Support scoring | citation_accuracy |
+|---|---|
+| whole-answer (default) | 0.286 |
+| **`claim_split=True` (fair for answer-level citations)** | **0.762** |
+
+The jump to 0.76 is the fair number; the **remaining** failures are the genuinely fabricated citations from finding 2 —
+the eval's real catches. Using spancheck on a real third-party system surfaced an assumption in its own metric, and the
+run turned it into a shipped, tested option.
 
 ## What it does *not* claim
 

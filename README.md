@@ -151,7 +151,9 @@ spancheck score audit.json        # recompute metrics from a cached run, no netw
   **contradicts** it ("the notice period is *not* 30 days"). The **opt-in LLM-judge** upgrades this to true entailment
   (`citation_accuracy(support_fn=judge_support(provider=...))`), and is **calibrated against a human gold set before it
   is trusted** (`python -m spancheck.calibrate`). The deterministic core flags the proxy's boundary rather than hiding
-  it (a test pins the false-positive; the judge catches it).
+  it (a test pins the false-positive; the judge catches it). For systems that emit a detailed answer with short,
+  *answer-level* quotes rather than per-claim citations, `citation_accuracy(claim_split=True)` scores support against
+  the answer sentence a span is most relevant to — the fair question for that citation style.
 - **Provenance requires a verbatim quote.** A paraphrased citation fails provenance by design — a deliberate incentive
   for a system to quote its sources exactly. `spancheck` does not (yet) match a citation by meaning.
 - **Source-scoping needs the caller to supply per-source text.** When an `Output` carries a `sources` map

@@ -17,7 +17,7 @@ from __future__ import annotations
 
 from dataclasses import dataclass
 
-from ._text import norm, words, content_words
+from ._text import norm, words, content_words, sentences
 from .adapter import Output, normalize
 from .core import GradeResult
 
@@ -54,8 +54,26 @@ def _covers(claim: str, span: str, threshold: float):
     return frac >= threshold, round(frac, 3)
 
 
+def _best_claim(answer: str, span: str) -> str:
+    """The answer sentence a span is most relevant to — for scoring answer-level citations fairly (`claim_split`).
+
+    A system that gives a detailed answer with short, answer-level evidence quotes shouldn't be judged on whether each
+    quote supports the *whole* answer — only whether it supports the claim it is most plausibly offered for. We pick
+    that claim as the answer sentence with the highest lexical overlap with the span."""
+    sents = sentences(answer)
+    if not sents:
+        return answer
+    sw = words(span)
+
+    def overlap(s):
+        cw = content_words(s)
+        return (sum(1 for w in cw if w in sw) / len(cw)) if cw else 0.0
+
+    return max(sents, key=overlap)
+
+
 def verify_citation(citation, contexts, answer: str = "", support_threshold: float = 0.6,
-                    support_fn=None, sources: dict = None) -> CitationVerdict:
+                    support_fn=None, sources: dict = None, claim_split: bool = False) -> CitationVerdict:
     """Verify one citation against the retrieved contexts. `answer` is the default claim when the citation names none.
 
     `support_fn`, if given, is a `(claim, span) -> (supported: bool, score: float)` callable used for the support check
@@ -65,6 +83,10 @@ def verify_citation(citation, contexts, answer: str = "", support_threshold: flo
     `sources` (a `{source_id: text}` map), if given and the citation names a `source_id` present in it, scopes
     provenance to that **named source only** — so a span attributed to the wrong document fails even when it exists
     elsewhere in the corpus.
+
+    `claim_split`: for a citation with no explicit `claim`, score support against the answer *sentence* the span is
+    most relevant to, rather than the whole answer — the fair model for systems that emit a detailed answer with short,
+    answer-level evidence quotes (see DECISIONS AB-DEC 012).
     """
     cit = _coerce_citation(citation)
     span = cit["span"]
@@ -80,8 +102,14 @@ def verify_citation(citation, contexts, answer: str = "", support_threshold: flo
         haystack = norm(" \n ".join(str(c) for c in (contexts or [])))
     span_found = norm(span) in haystack
 
-    # (b) support — does the span cover the claim (the cited sentence, else the whole answer)?
-    claim = cit["claim"] if cit["claim"] else answer
+    # (b) support — does the span cover the claim (the cited sentence; else the best-matching answer sentence when
+    #     claim_split, else the whole answer)?
+    if cit["claim"]:
+        claim = cit["claim"]
+    elif claim_split:
+        claim = _best_claim(answer, span)
+    else:
+        claim = answer
     if support_fn is not None:
         supported, frac = support_fn(claim, span)
         frac = round(float(frac), 3)
@@ -102,7 +130,8 @@ def verify_citation(citation, contexts, answer: str = "", support_threshold: flo
 
 
 def citation_accuracy(name: str = "citation_accuracy", support_threshold: float = 0.6,
-                      pass_threshold: float = 1.0, require_citation: bool = True, support_fn=None):
+                      pass_threshold: float = 1.0, require_citation: bool = True, support_fn=None,
+                      claim_split: bool = False):
     """Grader: the fraction of an answer's citations that are verified (present AND supporting).
 
     - Abstentions pass trivially (nothing cited).
@@ -112,6 +141,8 @@ def citation_accuracy(name: str = "citation_accuracy", support_threshold: float 
       (default 1.0 — one broken citation breaks the audit trail).
     - `support_fn` (e.g. `spancheck.judge_support(provider=...)`) upgrades the support check from the lexical proxy to
       model-judged entailment; provenance stays deterministic.
+    - `claim_split` scores an unscoped citation against the answer *sentence* it's most relevant to, not the whole
+      answer — the fair model for systems that emit a detailed answer with short, answer-level evidence quotes.
     """
     def g(case, output):
         out = output if isinstance(output, Output) else normalize(output)
@@ -126,7 +157,7 @@ def citation_accuracy(name: str = "citation_accuracy", support_threshold: float 
             return GradeResult(name, 1.0, True, "no citations present; citation not required")
 
         verdicts = [verify_citation(c, out.contexts, out.answer, support_threshold, support_fn=support_fn,
-                                    sources=out.sources)
+                                    sources=out.sources, claim_split=claim_split)
                     for c in cits]
         n_ok = sum(1 for v in verdicts if v.ok)
         frac = n_ok / len(verdicts)
