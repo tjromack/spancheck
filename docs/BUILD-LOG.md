@@ -321,3 +321,53 @@ Raw material for the case study and any later writing — kept honest and specif
   `pip install spancheck`. Copy/paste brief handed over in-session. (b) A RESUME-UPDATES line now that real numbers +
   a live package exist ([[keep-resume-updates-current]]). (c) **Gate 7 → 2:** a messier multi-document dogfood corpus
   (decisions scoped in-session). (d) Optional: a second real adapter, source-scoped citations.
+
+---
+
+## 2026-09-28
+
+### What happened
+- Opened the **external showcase** — pointing spancheck at *other people's real, published projects* (not framework
+  examples) to prove empirically that it's system/corpus-agnostic, and to generate case-study findings. Trevor picked
+  the **healthcare** domain and targets **Kotaemon + AnythingLLM**, design **(a)** (Kotaemon's real citation pipeline
+  fed by a BM25-retrieved context).
+- Wrote the runbook (`docs/EXTERNAL-SHOWCASE.md`) — per-target protocol, framing rules (neutral, reproducible,
+  field-report-not-benchmark), and a Step-0.5 feasibility pre-flight with a timebox.
+- Pulled a **public healthcare corpus** myself via `curl` (works through the TLS proxy; the Python HTTP clients don't):
+  5 Wikipedia articles (CC BY-SA, attributed) → `showcase/corpus/`.
+- **Kotaemon pre-flight — a saga, then success.** Confirmed its `CiteEvidence` model (verbatim source substrings) is a
+  perfect match for spancheck's citation-span verification, and got its **real** `CitationPipeline` running on
+  claude-sonnet-5 over our corpus. Six real environment hurdles, all solved and recorded in the runbook: Python 3.13→
+  3.11 (via `uv`), the TLS proxy on `uv` (`--native-tls`) and on `tiktoken`/`anthropic` (`truststore`), `theflow`'s
+  settings loader (`THEFLOW_SETTINGS_MODULE=theflow.settings.default`), the langchain 0.1.x pin (`uv sync` from the
+  lockfile), the `model_name` kwarg, and `temperature` being deprecated on the 5-family (`temperature=None`).
+- **Ran the scored showcase.** Built `showcase/kotaemon/{cases.jsonl, capture_kotaemon.py, score.py, score_judged.py}`;
+  captured 21 cases in Kotaemon's venv, scored offline in spancheck's env.
+
+### Results (Kotaemon × spancheck, 21 healthcare cases, claude-sonnet-5)
+- Overall **0.829**. Abstention: off-corpus **5/5**, adversarial 2/3. Groundedness 0.952. No-PII 1.00.
+- **Provenance + attribution: 18/23 citations verbatim; 18/18 of those source-scoped to the exact named document
+  (100%).** The headline — spancheck's core check ported to an unseen third-party system with zero tuning.
+- **Caught a real defect:** on an adversarial false premise, Kotaemon answered instead of abstaining *and* produced a
+  fabricated (non-verbatim) citation — provenance flagged it.
+- **An honest finding about spancheck's own metric:** citation *support* under-scored (lexical 0.29, judge 0.43)
+  because Kotaemon emits a detailed answer + short answer-level quotes, while the support check judges each quote
+  against the whole answer — it's calibrated for *claim-scoped* citations (as the dogfood used). Fair metric for such
+  systems = provenance + attribution; claim-splitting is the enhancement this surfaced. `showcase/kotaemon/FINDINGS.md`.
+
+### Learnings (2026-09-28)
+- **The pre-flight/timebox discipline earned its keep — twice.** It stopped me sinking an afternoon into a Windows
+  vector-DB install, and the offline stub smoke test (and the corpus-content read) caught bugs before the keyed run.
+- **A perfect score is only evidence once the provider is confirmed** (again): I verified `provider=anthropic` and
+  model-written answers before trusting anything.
+- **Read the low number correctly.** A 0.29 citation-support score looked alarming but was the *documented* proxy
+  boundary meeting a detailed-answer system — not a Kotaemon defect and not a spancheck bug, but a real insight into
+  the metric's assumption. The most valuable showcase output is a nuanced true finding, not a green bar.
+- **`curl` (OS trust store) reaches the internet here; Python `requests`/`httpx`/`uv` (their own TLS) need
+  `truststore`/`--native-tls`.** Banked for any future outbound work on this machine.
+
+### Next (open)
+- AnythingLLM (target #2) — pre-flight on the same protocol (its Docker+REST isolation should sidestep the Python-env
+  friction Kotaemon had). Then fold both into a "real-world use" case-study section (Kotaemon part already added).
+- Optional spancheck enhancement named by this run: a `provenance-only` / claim-splitting mode for answer-level-citation
+  systems. Third-party project clones + venvs live outside the repo (`~/showcase-targets/`); only our artifacts commit.

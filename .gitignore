@@ -26,3 +26,6 @@ Thumbs.db
 
 # Secrets
 .env
+
+# Derived showcase score outputs (regenerated from capture.json by the score scripts)
+showcase/*/audit*.json

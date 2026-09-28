@@ -90,6 +90,24 @@ bug, a measured behaviour. The multi-doc run is the harder test — messy, confl
 with **source-scoped provenance** (a span attributed to the wrong document fails even if it exists elsewhere) — and it
 confirms the system attributes every claim to the right source.
 
+### Beyond the dogfood: a real third-party system
+
+Dogfooding proves the method; the claim that spancheck is *system-agnostic* only holds if it works on something it
+didn't design for. So it was pointed at [Kotaemon](https://github.com/Cinnamon/kotaemon) — a real, published,
+Apache-2.0 citation-RAG application — as a black box: Kotaemon's own citation pipeline and QA prompt, on
+`claude-sonnet-5`, over a public healthcare corpus (21 cases). Three things came out of it, all honest:
+
+- **Provenance and attribution ported with zero tuning.** Of Kotaemon's verbatim citations, **18/18 were source-scoped
+  to the exact document they named** — spancheck verified a system it had never seen and got attribution 100% right.
+- **It caught a real defect.** On an adversarial false-premise question, Kotaemon answered instead of abstaining and
+  produced a **fabricated (non-verbatim) citation**; spancheck's provenance check flagged it.
+- **It surfaced an assumption in its own metric.** The support score under-scored (0.29 lexical, 0.43 judged) because
+  Kotaemon emits a *detailed answer with short, answer-level* evidence quotes, and spancheck's support check judges each
+  quote against the whole answer — it is calibrated for *claim-scoped* citations (as the dogfood used). The fair metric
+  for answer-level-citation systems is provenance + attribution; claim-splitting is the enhancement this run named.
+
+Full write-up: [`showcase/kotaemon/FINDINGS.md`](../showcase/kotaemon/FINDINGS.md).
+
 ## What I'd do differently
 
 - **A second real target beyond one product.** Both dogfoods score the same pipeline; a second, differently-built target

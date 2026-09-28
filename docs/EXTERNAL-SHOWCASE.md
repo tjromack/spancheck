@@ -42,10 +42,10 @@ citations must attribute to the *right* article (exercises spancheck's source-sc
 
 ## Target status
 
-| Target | License | Emits | Pre-flight verdict |
+| Target | License | Emits | Status |
 |---|---|---|---|
-| **Kotaemon** (Cinnamon Labs) | Apache-2.0 | **span-level citations** (`CiteEvidence`: verbatim source substrings, ≤15 words) | ✅ **FULL — confirmed working** (real `CitationPipeline` on claude-sonnet-5 returned a verbatim-in-source citation over our corpus) |
-| **AnythingLLM** (Mintplex Labs) | — | citations/sources via REST API | ⏳ pending pre-flight |
+| **Kotaemon** (Cinnamon Labs) | Apache-2.0 | span-level citations (`CiteEvidence`: verbatim source substrings) | ✅ **Scored** — 21 healthcare cases on claude-sonnet-5. Provenance + attribution **18/18 source-scoped**; caught a fabricated citation + a failed abstention on an adversarial case; surfaced a metric-design finding. See [`../showcase/kotaemon/FINDINGS.md`](../showcase/kotaemon/FINDINGS.md). |
+| **AnythingLLM** (Mintplex Labs) | — | citations/sources via REST API | ⏳ pending pre-flight (target #2) |
 
 ## Appendix — reproducible Kotaemon setup (the hard-won recipe)
 

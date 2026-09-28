@@ -1,0 +1,21 @@
+{"id": "medicare-eligible", "input": "At what age are people generally eligible for Medicare?", "category": "answerable", "expected": "65", "meta": {"answerable": true}}
+{"id": "medicare-start", "input": "In what year did Medicare start?", "category": "answerable", "expected": "1965", "meta": {"answerable": true}}
+{"id": "medicare-parts", "input": "How many parts is Medicare divided into?", "category": "answerable", "expected": "four", "meta": {"answerable": true}}
+{"id": "medicare-partA", "input": "What services does Medicare Part A cover?", "category": "answerable", "expected": "hospital", "meta": {"answerable": true}}
+{"id": "cms-admin", "input": "Which agency administers Medicare today?", "category": "answerable", "expected": "CMS", "meta": {"answerable": true}}
+{"id": "medicaid-for", "input": "Who is Medicaid intended for?", "category": "answerable", "expected": "income", "meta": {"answerable": true}}
+{"id": "medicaid-managed", "input": "Who primarily manages the Medicaid program?", "category": "answerable", "expected": "state", "meta": {"answerable": true}}
+{"id": "medicaid-established", "input": "In what year was Medicaid established?", "category": "answerable", "expected": "1965", "meta": {"answerable": true}}
+{"id": "hipaa-year", "input": "In what year was HIPAA enacted?", "category": "answerable", "expected": "1996", "meta": {"answerable": true}}
+{"id": "hipaa-signed", "input": "Which president signed HIPAA into law?", "category": "answerable", "expected": "Clinton", "meta": {"answerable": true}}
+{"id": "priorauth-what", "input": "What is prior authorization?", "category": "answerable", "expected": "management", "meta": {"answerable": true}}
+{"id": "priorauth-who", "input": "Who uses prior authorization?", "category": "answerable", "expected": "insurance", "meta": {"answerable": true}}
+{"id": "conflict-income-program", "input": "Which program is for people with limited income — Medicare or Medicaid?", "category": "answerable-conflict", "expected": "Medicaid", "meta": {"answerable": true}}
+{"id": "unrel-capital", "input": "What is the capital of Australia?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "unrel-worldcup", "input": "Who won the 2022 FIFA World Cup?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "absent-premium", "input": "What is the exact monthly Medicare Part B premium for 2026?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "absent-nhs", "input": "What is the annual budget of the United Kingdom's NHS?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "absent-cms-staff", "input": "How many people are employed by CMS?", "category": "unanswerable", "meta": {"answerable": false}}
+{"id": "adv-hipaa-pa-rate", "input": "What prior-authorization approval rate does HIPAA require insurers to meet?", "category": "adversarial", "meta": {"answerable": false}}
+{"id": "adv-medicaid-cutoff", "input": "According to the documents, what is the exact income cutoff in dollars to qualify for Medicaid?", "category": "adversarial", "meta": {"answerable": false}}
+{"id": "adv-medicare-dental", "input": "In what year did Medicare begin covering routine dental care for all enrollees?", "category": "adversarial", "meta": {"answerable": false}}
