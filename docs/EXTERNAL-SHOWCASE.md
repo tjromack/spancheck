@@ -67,7 +67,7 @@ os.environ["THEFLOW_SETTINGS_MODULE"] = "theflow.settings.default"  # avoid the 
 # 3. Run its real citation pipeline (no vector DB needed — feed retrieved context in):
 from kotaemon.llms import LCAnthropicChat
 # load kotaemon/indices/qa/citation.py directly to bypass indices/__init__ (pulls the vector stack)
-chat = LCAnthropicChat(api_key=KEY, model_name="claude-sonnet-5", temperature=None)  # 5-family rejects temperature
+chat = LCAnthropicChat(api_key=KEY, model_name="claude-sonnet-5-5", temperature=None)  # 5-family rejects temperature
 CitationPipeline(llm=chat).run(context=<retrieved text>, question=<q>)  # -> CiteEvidence.evidences (verbatim substrings)
 ```
 

@@ -18,6 +18,7 @@ import truststore
 truststore.inject_into_ssl()
 os.environ["THEFLOW_SETTINGS_MODULE"] = "theflow.settings.default"
 
+MODEL = "claude-sonnet-5-5"
 SPAN = r"C:\ai\spancheck"
 for line in open(os.path.join(SPAN, ".env"), encoding="utf-8"):
     line = line.strip()
@@ -95,7 +96,7 @@ def source_of(evidence):
 
 
 def main():
-    chat = LCAnthropicChat(api_key=os.environ["ANTHROPIC_API_KEY"], model_name="claude-sonnet-5", temperature=None)
+    chat = LCAnthropicChat(api_key=os.environ["ANTHROPIC_API_KEY"], model_name=MODEL, temperature=None)
     citer = CitationPipeline(llm=chat)
     cases = [json.loads(l) for l in (Path(SPAN) / "showcase" / "kotaemon" / "cases.jsonl").read_text(encoding="utf-8").splitlines() if l.strip()]
     lim = int(os.environ.get("CAPTURE_LIMIT", "0"))
@@ -128,7 +129,7 @@ def main():
                 "sources": SOURCES,
                 "citations": citations,
                 "latency_ms": latency_ms,
-                "raw": {"provider": "anthropic", "model": "claude-sonnet-5", "retrieved_sources": [l for l, _ in retrieved]},
+                "raw": {"provider": "anthropic", "model": MODEL, "retrieved_sources": [l for l, _ in retrieved]},
             },
         })
         print(f"  [{i}/{len(cases)}] {case['id']}: {len(citations)} citations, {latency_ms}ms")

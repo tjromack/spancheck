@@ -4,7 +4,7 @@ The judge is only trusted after this reports how often it agrees with human labe
 stub is measured (a deterministic baseline that catches negation but misses paraphrase — visible in the confusion
 counts). The real number comes from a keyed run:
 
-    python -m spancheck.calibrate --real --model claude-sonnet-5    # needs ANTHROPIC_API_KEY
+    python -m spancheck.calibrate --real --model claude-sonnet-5-5    # needs ANTHROPIC_API_KEY
 
 Stdlib only. The gold set (calibration/entailment_gold.jsonl) is synthetic and public.
 """
@@ -65,7 +65,7 @@ def main(argv=None) -> int:
     p.add_argument("--gold", default="calibration/entailment_gold.jsonl")
     p.add_argument("--threshold", type=float, default=0.5)
     p.add_argument("--real", action="store_true", help="use the Anthropic provider (needs ANTHROPIC_API_KEY)")
-    p.add_argument("--model", default="claude-sonnet-5")
+    p.add_argument("--model", default="claude-sonnet-5-5")
     a = p.parse_args(argv)
 
     from ._env import load_dotenv

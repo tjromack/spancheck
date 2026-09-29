@@ -19,7 +19,7 @@ run = Run.from_audit_log(str(ROOT / "showcase" / "kotaemon" / "audit.json"))
 
 det = run.scorecard().by_grader()["citation_accuracy"]["pass_rate"]
 
-provider = anthropic_provider(model="claude-sonnet-5")
+provider = anthropic_provider(model="claude-sonnet-5-5")
 judged = run.rescore([citation_accuracy(support_fn=judge_support(provider=provider))])
 jud = judged.scorecard().by_grader()["citation_accuracy"]["pass_rate"]
 

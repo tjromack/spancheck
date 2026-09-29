@@ -91,7 +91,7 @@ def main():
             "expected": case.get("expected"), "meta": case.get("meta") or {},
             "output": {"answer": answer, "contexts": contexts, "sources": SOURCES,
                        "citations": citations, "latency_ms": latency_ms,
-                       "raw": {"provider": "anthropic", "model": "claude-sonnet-5", "n_sources": len(srcs)}},
+                       "raw": {"provider": "anthropic", "model": "claude-sonnet-5-5", "n_sources": len(srcs)}},
         })
         print(f"  [{i}/{len(cases)}] {case['id']}: {len(srcs)} sources, {latency_ms}ms")
 
